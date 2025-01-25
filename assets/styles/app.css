@@ -1,3 +1,56 @@
 body {
-    background-color: skyblue;
+  display: flex;
+  flex-direction: column;
+  background-color: #1b2838;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: #dcdedf;
+  background-color: #171d25;
+  min-height: 75px;
+  width: 100%;
+}
+
+a {
+  color: #dcdedf;
+  padding: 5px;
+}
+
+#game-container {
+  width: 70%;
+  min-height: 500px;
+  background-color: #a9aaaa;
+  align-self: center;
+  justify-content: center;
+  margin: 50px;
+  padding-top: 25px;
+}
+
+.game {
+  background-color: #1b2838;
+  border: 2px solid #1b2838;
+  color: #dcdedf;
+  margin: 20px;
+  display: flex;
+  width: 90%;
+  height: 100px;
+  justify-self: center;
+}
+
+.game-img {
+  background-color: #c0c2c3;
+}
+
+/* verhouding van gamethumbnails moeten 16:9 zijn */
+.game > div > img {
+  height: 100%;
+}
+
+.game-data {
+  padding-left: 2em;
 }
