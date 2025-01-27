@@ -21,14 +21,14 @@ a {
   padding: 5px;
 }
 
-#game-container {
+.container {
   width: 70%;
   min-height: 500px;
-  background-color: #a9aaaa;
+  background-color: rgba(169, 170, 170, 0.5);
   align-self: center;
   justify-content: center;
   margin: 50px;
-  padding-top: 25px;
+  padding: 25px;
 }
 
 .game {
@@ -53,4 +53,67 @@ a {
 
 .game-data {
   padding-left: 2em;
+}
+
+form {
+  width: 35%;
+  background-color: rgba(169, 170, 170, 0.5);
+  margin: 50px;
+  padding: 0 35px 35px 35px;
+  align-self: center;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: 500;
+}
+input {
+  /* display: block; */
+  height: 50px;
+  width: 85%;
+  background-color: rgba(27, 40, 56, 0.3);
+  border-radius: 3px;
+  padding: 0 10px;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 300;
+  border: 2px solid #171d25;
+}
+
+select {
+  height: 30px;
+  background-color: rgba(27, 40, 56, 0.3);
+  border-radius: 3px;
+  padding: 0 10px;
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+  font-size: 14px;
+  font-weight: 300;
+  border: 2px solid #171d25;
+}
+
+input[type="checkbox"] {
+  height: 20px;
+  accent-color: #171d25;
+  width: 20px;
+}
+
+button {
+  margin-top: 15px;
+  /* height: 50px; */
+  padding: 15px 25px;
+  background-color: #171d25;
+  color: #dcdedf;
+  border: 2px solid #171d25;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+button:hover {
+  background-color: #c0c2c3;
+  color: #171d25;
 }
