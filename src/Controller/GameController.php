@@ -66,6 +66,14 @@ final class GameController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $file = $form->get('thumbnail')->getData();
+
+            $file->getPathname();
+            $to = 'uploads/' .  $file->getClientOriginalName();
+            move_uploaded_file($file->getPathname(), $to );
+            $game->setThumbnail($to);
+            
             $entityManager->flush();
 
             return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
