@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Game index{% endblock %}
+
+{% block body %}
+    
+    <div id="game-container" class="container">
+
+        {% for game in games %}
+        <div class="game">
+            <div class="game-img">
+                <img src ="{{asset(game.thumbnail) }}">
+            </div>
+            <div class="game-data">
+                <h2>{{game.name}}</h2>
+                <a href="">{{ game.link }}</a>
+            </div>
+        </div>
+        <a href="{{ path('app_game_show', {'id': game.id}) }}">show</a>
+    <a href="{{ path('app_game_edit', {'id': game.id}) }}">edit</a>
+            
+        {% else %}
+            
+        <p>no records found</p>
+                
+        {% endfor %}
+
+    </div>
+    
+
+    <a href="{{ path('app_game_new') }}">Create new</a>
+{% endblock %}

@@ -43,7 +43,9 @@ a {
 }
 
 .game-img {
-  background-color: #c0c2c3;
+  /* background-color: #c0c2c3; */
+  height: 100px;
+  width: 178px;
 }
 
 /* verhouding van gamethumbnails moeten 16:9 zijn */
