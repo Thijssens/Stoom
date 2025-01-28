@@ -23,7 +23,19 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var string $plainPassword */
+            
+            $file = $form->get('profilepicture')->getData();
+
+            $file->getPathname();
+            $to = 'uploads/' .  $file->getClientOriginalName();
+            move_uploaded_file($file->getPathname(), $to );
+            $user->setProfilepicture($to);
+            
+            
+            
             $plainPassword = $form->get('plainPassword')->getData();
+
+            
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
