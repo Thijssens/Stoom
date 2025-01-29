@@ -37,6 +37,7 @@ class RegistrationFormType extends AbstractType
                         'maxSizeMessage' => 'The maximum allowed file size is 10MB.',
                     ]),
                 ],
+                'required' => false,
             ])
 
             ->add('birthday', BirthdayType::class, [

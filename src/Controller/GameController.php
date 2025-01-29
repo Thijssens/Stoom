@@ -6,23 +6,32 @@ use App\Entity\Game;
 use App\Form\GameType;
 use App\Repository\GameRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/game')]
+#[Route('/')]
 final class GameController extends AbstractController
 {
     #[Route(name: 'app_game_index', methods: ['GET'])]
-    public function index(GameRepository $gameRepository): Response
+    public function index(GameRepository $gameRepository, Security $security): Response
     {
+    
+        if($security->isGranted('ROLE_USER')){
+            return $this->render('game/index.html.twig', [
+                'games' => $gameRepository->findAll(),
+            ]);
+        }                                                                   //only logged in users can see priv te games
+        else{
         return $this->render('game/index.html.twig', [
-            'games' => $gameRepository->findAll(),
+            'games' => $gameRepository->getPublicGames(),
         ]);
+        }
     }
 
-    #[Route('/new', name: 'app_game_new', methods: ['GET', 'POST'])]
+    #[Route('/game/new', name: 'app_game_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $game = new Game();
@@ -51,7 +60,7 @@ final class GameController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_game_show', methods: ['GET'])]
+    #[Route('/game/{id}', name: 'app_game_show', methods: ['GET'])]
     public function show(Game $game): Response
     {
         return $this->render('game/show.html.twig', [
@@ -59,7 +68,7 @@ final class GameController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_game_edit', methods: ['GET', 'POST'])]
+    #[Route('/game/{id}/edit', name: 'app_game_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Game $game, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(GameType::class, $game);
@@ -85,7 +94,7 @@ final class GameController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_game_delete', methods: ['POST'])]
+    #[Route('/game/{id}', name: 'app_game_delete', methods: ['POST'])]
     public function delete(Request $request, Game $game, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$game->getId(), $request->getPayload()->getString('_token'))) {

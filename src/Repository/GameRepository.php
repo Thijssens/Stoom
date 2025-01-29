@@ -16,6 +16,16 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
+
+
+    public function getPublicGames(): array
+    {
+        return $this->createQueryBuilder('g')
+        ->andWhere('g.isPublic = true')
+        ->getQuery()
+        ->getResult();
+    }
+
     //    /**
     //     * @return Game[] Returns an array of Game objects
     //     */
