@@ -26,10 +26,13 @@ class RegistrationController extends AbstractController
             
             $file = $form->get('profilepicture')->getData();
 
-            $file->getPathname();
-            $to = 'uploads/' .  $file->getClientOriginalName();
-            move_uploaded_file($file->getPathname(), $to );
-            $user->setProfilepicture($to);
+            if (isset($file)){
+                
+                $file->getPathname();
+                $to = 'uploads/' .  $file->getClientOriginalName();
+                move_uploaded_file($file->getPathname(), $to );
+                $user->setProfilepicture($to);
+            }
             
             
             
