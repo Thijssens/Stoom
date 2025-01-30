@@ -25,6 +25,9 @@ class Game
     #[ORM\Column]
     private ?bool $isPublic = null;
 
+    #[ORM\Column]
+    private ?int $owner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +77,18 @@ class Game
     public function setIsPublic(bool $isPublic): static
     {
         $this->isPublic = $isPublic;
+
+        return $this;
+    }
+
+    public function getOwner(): ?int
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(int $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

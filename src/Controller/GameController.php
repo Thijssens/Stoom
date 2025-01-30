@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Game;
+use App\Entity\User;
 use App\Form\GameType;
 use App\Repository\GameRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,10 +19,12 @@ final class GameController extends AbstractController
     #[Route(name: 'app_game_index', methods: ['GET'])]
     public function index(GameRepository $gameRepository, Security $security): Response
     {
-    
+        $user = $this->getUser();
+        //dd($this->getUser());
         if($security->isGranted('ROLE_USER')){
             return $this->render('game/index.html.twig', [
                 'games' => $gameRepository->findAll(),
+                'user' =>$user,
             ]);
         }                                                                   //only logged in users can see priv te games
         else{
@@ -46,6 +49,10 @@ final class GameController extends AbstractController
             $to = 'uploads/' .  $file->getClientOriginalName();
             move_uploaded_file($file->getPathname(), $to );
             $game->setThumbnail($to);
+
+            
+            // $user = $this->getUser();
+            // $id = $user->getId();
             
             
             $entityManager->persist($game);

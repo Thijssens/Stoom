@@ -15,16 +15,27 @@
 				<div class="game-data">
 					<h2>{{game.name}}</h2>
 					{% if is_granted('ROLE_USER') %}
-						<a href="">{{ game.link }}</a>
+						<a href="{{ game.link }}" class= "styledLink">Play Game</a>
 					{% else %}
-						<a href="{{ path('app_login') }}">Login</a>
+						<a href="{{ path('app_login') }}" class="styledLink">Login</a>
 					{% endif %}
+				</div>
+				<div class="game-controls">
+					{% if user is defined %}
+						{% if is_granted('ROLE_USER') %}
+							<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">show</a>
+						{% endif %}
 
+						{% if is_granted('ROLE_ADMIN') or game.owner == user.id %}
+							<a href="{{ path('app_game_edit', {'id': game.id}) }}" class="button">edit</a>
+						{% endif %}
 
+					{% endif %}
+				
 				</div>
 			</div>
-			<a href="{{ path('app_game_show', {'id': game.id}) }}">show</a>
-			<a href="{{ path('app_game_edit', {'id': game.id}) }}">edit</a>
+			
+			
 
 		{% else %}
 
