@@ -32,7 +32,8 @@ a {
   padding: 25px;
 }
 
-.game {
+.game,
+.player {
   display: flex;
   /* align-items: center; */
   background-color: #1b2838;
@@ -51,12 +52,19 @@ a {
   width: 178px;
 }
 
+.player-img {
+  height: 100px;
+  width: 100px;
+}
+
 /* verhouding van gamethumbnails moeten 16:9 zijn */
-.game > div > img {
+.game > div > img,
+.player > div > img {
   height: 100%;
 }
 
-.game-data {
+.game-data,
+.player-data {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -67,7 +75,8 @@ a {
   flex-grow: 1;
 }
 
-.game-controls {
+.game-controls,
+.player-controls {
   display: flex;
   flex-direction: column;
   justify-content: center;

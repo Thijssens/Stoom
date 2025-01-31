@@ -6,6 +6,7 @@ use App\Entity\Game;
 use App\Entity\User;
 use App\Form\GameType;
 use App\Repository\GameRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,13 +36,17 @@ final class GameController extends AbstractController
     }
 
     #[Route('/game/new', name: 'app_game_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $game = new Game();
         $form = $this->createForm(GameType::class, $game);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $email = $this->getUser()->getUserIdentifier();
+            $userID = $userRepository -> findUserIdByEmail($email);
+            $game->setOwner($userID);
             
             $file = $form->get('thumbnail')->getData();
 
