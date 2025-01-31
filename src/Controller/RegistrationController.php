@@ -33,6 +33,10 @@ class RegistrationController extends AbstractController
                 move_uploaded_file($file->getPathname(), $to );
                 $user->setProfilepicture($to);
             }
+
+            if (!isset($file)){
+                $user->setProfilepicture('uploads/Dummy_User.jpg');
+            }
             
             
             

@@ -1,29 +1,59 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}
+				Welcome!
+			{% endblock %}
+		</title>
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> {% block stylesheets %}{% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        <header>
-                <h1>SteamClone</h1>
-                <nav>
-                    <a href="">Mijn spellen</a>
-                    <a href="">link</a>
-                    <a href="">link</a>
-                </nav>
-                <div>
-                    <p>login</p>
-                </div>
-            </header>
+		{% block javascripts %}
+			{% block importmap %}
+				{{ importmap('app') }}
+			{% endblock %}
+		{% endblock %}
+	</head>
+	<body>
+		<header>
+			<h1>
+				SteamClone
+			</h1>
+			<nav>
+				{% if is_granted('ROLE_USER') %}
+					<a href="{{ path('app_game_index')}}" class="styledLink">
+						All games
+					</a>
+					{# <a href="{{ path('app_game_friends')}}" class="styledLink"> #}
+						{# Friends games #}
+					{# </a> #}
+					<a href="{{ path('app_player')}}" class="styledLink">
+						Players
+					</a>
 
-        {% block body %}{% endblock %}
-    </body>
+				{% endif %}
+
+			</nav>
+			<div>
+				{% if is_granted('ROLE_USER') %}
+					{# {% if user is defined %} #}
+					<a href="" class="button">
+						My profile
+					</a>
+					{# {% endif %} #}
+
+				{% else %}
+					<a href="{{ path('app_login') }}" class="button">
+						Login
+					</a>
+				{% endif %}
+
+			</div>
+		</header>
+
+
+		{% block body %}
+		{% endblock %}
+	</body>
 </html>

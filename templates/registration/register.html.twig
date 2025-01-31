@@ -1,30 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}
+	Register
+{% endblock %}
 
 {% block body %}
 
-    
 
-    {{ form_errors(registrationForm) }}
+	{{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        <h1>Register</h1>
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword, {
+	{{ form_start(registrationForm) }}
+	<h1>
+		Register
+	</h1>
+	{{ form_row(registrationForm.email) }}
+	{{ form_row(registrationForm.username) }}
+	{{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}
-        {{ form_row(registrationForm.confirmPassword, {
+	{{ form_row(registrationForm.confirmPassword, {
             label: 'Confirm Password'
         }) }}
-        {{ form_row(registrationForm.birthday) }}
-        {{ form_row(registrationForm.gender) }}
-        {{ form_row(registrationForm.profilepicture) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+	{{ form_row(registrationForm.birthday) }}
+	{{ form_row(registrationForm.gender) }}
+	{{ form_row(registrationForm.profilepicture) }}
+	{{ form_row(registrationForm.agreeTerms) }}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+	<button type="submit" class="btn">
+		Register
+	</button>
+	{{ form_end(registrationForm) }}
 
-    <a href="{{ path('app_login') }}">Already have an account?</a>
+	<a href="{{ path('app_login') }}">
+		Already have an account?
+	</a>
 {% endblock %}
