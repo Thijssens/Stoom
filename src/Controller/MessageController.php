@@ -29,11 +29,11 @@ class MessageController extends AbstractController
     }
 
     #[Route('/new/{id}', name: 'message_new')]
-    public function new(Request $request, User $receiver, EntityManagerInterface $em, UserRepository $userRepository): Response
+    public function new(int $id, Request $request, User $receiver, EntityManagerInterface $em, UserRepository $userRepository): Response
     {
         $message = new Message();
         $message->setSender($this->getUser());
-        $receiver = $userRepository->findUserByEmail('test@test'); //MOET NOG AANGEPAST WORDEN
+        $receiver = $userRepository->findUserById($id); //MOET NOG AANGEPAST WORDEN
         $message->setReceiver($receiver);
 
         $form = $this->createForm(MessageType::class, $message);
