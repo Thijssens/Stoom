@@ -33,7 +33,7 @@ class MessageController extends AbstractController
     {
         $message = new Message();
         $message->setSender($this->getUser());
-        $receiver = $userRepository->findUserById($id); //MOET NOG AANGEPAST WORDEN
+        $receiver = $userRepository->findUserById($id);
         $message->setReceiver($receiver);
 
         $form = $this->createForm(MessageType::class, $message);

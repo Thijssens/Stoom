@@ -38,7 +38,7 @@
 			<div>
 				{% if is_granted('ROLE_USER') %}
 					{# {% if user is defined %} #}
-					<a href="" class="button">
+					<a href="{{ path('app_profile_show') }}" class="button">
 						My profile
 					</a>
 					{# {% endif %} #}
