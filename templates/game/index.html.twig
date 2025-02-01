@@ -1,50 +1,65 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Game index
+{% block title %}
+	Game index
 {% endblock %}
 
 {% block body %}
 
 	<div id="game-container" class="container">
-
+		{% if is_granted('ROLE_USER') %}
+			<a href="{{ path('app_game_new') }}" class='buttonNew'>
+				+
+			</a>
+		{% endif %}
 		{% for game in games %}
 			<div class="game">
 				<div class="game-img">
 					<img src="{{asset(game.thumbnail) }}">
 				</div>
 				<div class="game-data">
-					<h2>{{game.name}}</h2>
+					<h2>
+						{{game.name}}
+					</h2>
 					{% if is_granted('ROLE_USER') %}
-						<a href="{{ game.link }}" class= "styledLink">Play Game</a>
+						<a href="{{ game.link }}" class="styledLink">
+							Play Game
+						</a>
 					{% else %}
-						<a href="{{ path('app_login') }}" class="styledLink">Login</a>
+						<a href="{{ path('app_login') }}" class="styledLink">
+							Login
+						</a>
 					{% endif %}
 				</div>
 				<div class="game-controls">
-					{% if user is defined %}
+					{% if user is defined %} 
 						{% if is_granted('ROLE_USER') %}
-							<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">show</a>
+							<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">
+								show
+							</a>
 						{% endif %}
 
 						{% if is_granted('ROLE_ADMIN') or game.owner == user.id %}
-							<a href="{{ path('app_game_edit', {'id': game.id}) }}" class="button">edit</a>
+							<a href="{{ path('app_game_edit', {'id': game.id}) }}" class="button">
+								edit
+							</a>
 						{% endif %}
 
 					{% endif %}
-				
+
 				</div>
 			</div>
-			
-			
+
 
 		{% else %}
 
-			<p>no records found</p>
+			<p>
+				no records found
+			</p>
 
 		{% endfor %}
 
 	</div>
 
 
-	<a href="{{ path('app_game_new') }}">Create new</a>
 {% endblock %}
