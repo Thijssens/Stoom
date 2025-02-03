@@ -21,9 +21,20 @@ class GameRepository extends ServiceEntityRepository
     public function getPublicGames(): array
     {
         return $this->createQueryBuilder('g')
-        ->andWhere('g.isPublic = true')
-        ->getQuery()
-        ->getResult();
+            ->andWhere('g.isPublic = true')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findGamesByUserId($value): array
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.owner = :val')
+            ->setParameter('val', $value)
+            ->orderBy('g.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     //    /**
