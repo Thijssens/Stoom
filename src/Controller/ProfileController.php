@@ -17,11 +17,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class ProfileController extends AbstractController
 {
     #[Route('/', name: 'app_profile_show')]
-    public function show(GameRepository $gameRepository, UserRepository $userRepository): Response
+    public function show(GameRepository $gameRepository): Response
     {
-        $user = $userRepository->findUserByEmail($this->getUser()->getUserIdentifier());
-        $games = $gameRepository->findGamesByUserId($user->getId());
-        
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $games = $gameRepository->findGamesByUserId($user->getId());
+        }
+
+
 
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
@@ -34,9 +38,12 @@ final class ProfileController extends AbstractController
     }
 
     #[Route('/edit', name: 'app_profile_edit')]
-    public function edit(UserPasswordHasherInterface $userPasswordHasher, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(UserPasswordHasherInterface $userPasswordHasher, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $user = $userRepository->findUserByEmail($this->getUser()->getUserIdentifier());
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            /** @var User $user */
+            $user = $this->getUser();
+        }
 
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to edit your profile.');

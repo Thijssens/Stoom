@@ -37,6 +37,18 @@ class GameRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findViewableGames($id, $friendsId): array
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.owner = :val OR g.isPublic = true OR g.owner IN(:friendsId)')
+            ->setParameter('val', $id)
+            ->setParameter('friendsId', $friendsId)
+            ->orderBy('g.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return Game[] Returns an array of Game objects
     //     */
