@@ -1,29 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Game{% endblock %}
+{% block title %}User
+{% endblock %}
 
 {% block body %}
-    <h1>Game</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ user.username }}</td>
-            </tr>
-            <tr>
-                <th>Thumbnail</th>
-                <td><img src ="{{asset(user.profilepicture) }}"></td>
-            </tr>
-        </tbody>
-    </table>
+	<div class="container-wrap">
+		<div id="myprofile-container" class="container">
+			<h1>My Data</h1>
+			<div>
+				<div>
+					<img src="{{asset(user.profilepicture) }}">
+				</div>
+				<div>
+					<p>Username:
+						{{ user.username }}</p>
+					<p>Email :
+						{{ user.email }}</p>
+					<p>Gender :
+						{{ user.gender }}</p>
+					<p>Birthday:
+						{{ user.birthday|date('Y-m-d')}}</p>
 
 
-    <a href="{{ path('app_profile_edit') }}">edit</a>
+				</div>
 
-    {# {{ include('game/_delete_form.html.twig') }} #}
+			</div>
+			<a href="{{ path('app_profile_edit') }}" class="button">Edit</a>
+
+		</div>
+
+		<div class="container">
+			<h1>My Games</h1>
+			{% for game in games %}
+				<div class="game">
+					<div class="game-img">
+						<img src="{{asset(game.thumbnail) }}">
+					</div>
+					<div class="game-data">
+						<h2>{{game.name}}</h2>
+						{% if is_granted('ROLE_USER') %}
+							<a href="{{ game.link }}" class="styledLink">Play Game</a>
+						{% else %}
+							<a href="{{ path('app_login') }}" class="styledLink">Login</a>
+
+						{% endif %}
+					</div>
+					<div class="game-controls">
+						{% if user is defined%}
+							{% if is_granted('ROLE_USER') %}
+								{# class button bijgezet #}
+								<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">Show</a>
+							{% endif %}
+
+							{% if is_granted('ROLE_ADMIN') or game.owner == user.id %}
+								<a href="{{ path('app_game_edit', {'id': game.id}) }}" class="button">Edit</a>
+							{% endif %}
+						{% endif %}
+					</div>
+				</div>
+
+
+			{% else %}
+
+				<p>no records found</p>
+
+			{% endfor %}
+
+		</div>
+		<div class="container">
+			<h1>My Achievements</h1>
+		</div>
+		<div class="container">
+
+			<h1>My Stats</h1>
+		</div>
+		<div class="container">
+
+			<h1>My Chart</h1>
+		</div>
+
+
+	</div>
+
 {% endblock %}

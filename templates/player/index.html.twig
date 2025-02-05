@@ -24,16 +24,23 @@
 						<a href="" class="button">
 							Add friend
 						</a>
-						<a href="{{ path('message_new', { id: player.id }) }}" class="button">
+						<a href="{{ path('message_index', { id: player.id }) }}" class="button">
 							Send message
 						</a>
 
 
 					</div>
 				</div>
+
+				
 			{% endif %}
 		{% endfor %}
 
+ <h1>Player List</h1>
 
+    <form method="get" action="{{ path('app_player') }}">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search players by name">
+        <button type="submit">Search</button>
+    </form>
 	</div>
 {% endblock %}

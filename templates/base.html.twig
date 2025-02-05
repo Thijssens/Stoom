@@ -3,8 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>
-			{% block title %}
-				Welcome!
+			{% block title %}Welcome!
 			{% endblock %}
 		</title>
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> {% block stylesheets %}{% endblock %}
@@ -17,20 +16,12 @@
 	</head>
 	<body>
 		<header>
-			<h1>
-				SteamClone
-			</h1>
+			<h1>Stoom</h1>
 			<nav>
 				{% if is_granted('ROLE_USER') %}
-					<a href="{{ path('app_game_index')}}" class="styledLink">
-						All games
-					</a>
-					{# <a href="{{ path('app_game_friends')}}" class="styledLink"> #}
-						{# Friends games #}
-					{# </a> #}
-					<a href="{{ path('app_player')}}" class="styledLink">
-						Players
-					</a>
+					<a href="{{ path('app_game_index')}}" class="styledLink">All games</a>
+					<a href="{{ path('app_game_friends')}}" class="styledLink">Friends games</a>
+					<a href="{{ path('app_player')}}" class="styledLink">Players</a>
 
 				{% endif %}
 
@@ -38,22 +29,22 @@
 			<div>
 				{% if is_granted('ROLE_USER') %}
 					{# {% if user is defined %} #}
-					<a href="{{ path('app_profile_show') }}" class="button">
-						My profile
-					</a>
+					<a href="{{ path('app_profile_show') }}" class="button">My profile</a>
+					{# nog enkel laten zien wanneer je een vriend hebt #}
+					<a href="{{ path('message_index', { id: 0})}}" class="button">Message</a>
+
 					{# {% endif %} #}
 
 				{% else %}
-					<a href="{{ path('app_login') }}" class="button">
-						Login
-					</a>
+					<a href="{{ path('app_login') }}" class="button">Login</a>
+
+
 				{% endif %}
+
 
 			</div>
 		</header>
 
-
-		{% block body %}
-		{% endblock %}
+		{% block body %}{% endblock %}
 	</body>
 </html>

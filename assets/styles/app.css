@@ -12,13 +12,24 @@ header {
   align-items: center;
   color: #dcdedf;
   background-color: #171d25;
-  min-height: 75px;
+  height: 90px;
   width: 100%;
+}
+
+header > h1 {
+  font-family: "Brush Script MT", cursive;
+  font-size: 80px;
 }
 
 a {
   color: #dcdedf;
   padding: 5px;
+}
+
+.container-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .container {
@@ -33,22 +44,44 @@ a {
   padding: 25px;
 }
 
+.container-wrap > .container {
+  width: 40%;
+  height: 500px;
+  border: 3px solid black;
+  /*om de container verticaal scrollable te maken*/
+  overflow-y: auto;
+  margin: 20px;
+}
+
+#myprofile-container > div {
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  justify-content: space-evenly;
+  font-size: large;
+}
+
+#myprofile-container > a {
+  font-size: x-large;
+}
+
+#myprofile-container > img {
+  height: 200px;
+}
+
 .game,
 .player {
   display: flex;
-  /* align-items: center; */
   background-color: #1b2838;
   border: 2px solid #1b2838;
   color: #dcdedf;
   margin: 20px;
   width: 90%;
   height: 100px;
-  /* justify-self: center; */
 }
 
 .game-img {
-  /* background-color: #c0c2c3; */
-  /* display: flex; */
   height: 100px;
   width: 178px;
 }
@@ -88,7 +121,6 @@ a {
 a.button {
   padding: 0.3em;
   margin: 0.5em;
-  /* border: 1px solid #171d25; */
   border-radius: 5px;
   color: #171d25;
   background-color: #c0c2c3;
@@ -97,12 +129,13 @@ a.button {
 
 a.styledLink {
   margin-bottom: 20px;
+  margin-right: 5px;
   background-color: rgba(192, 194, 195, 0.2);
   text-decoration: none;
 }
 
 a.buttonNew {
-  padding: 0, 25em;
+  padding: 0.25em;
   margin-right: 5%;
   border-radius: 5px;
   width: 5%;
@@ -130,7 +163,6 @@ label {
 }
 
 input {
-  /* display: block; */
   height: 50px;
   width: 85%;
   background-color: rgba(27, 40, 56, 0.3);
@@ -163,7 +195,6 @@ input[type="checkbox"] {
 
 button {
   margin-top: 15px;
-  /* height: 50px; */
   padding: 15px 25px;
   background-color: #171d25;
   color: #dcdedf;
@@ -176,4 +207,12 @@ button {
 button:hover {
   background-color: #c0c2c3;
   color: #171d25;
+}
+
+.sender {
+  margin-left: 250px;
+}
+
+.receiver {
+  margin-right: 250px;
 }
