@@ -31,9 +31,16 @@
 
 					</div>
 				</div>
+
+				
 			{% endif %}
 		{% endfor %}
 
+ <h1>Player List</h1>
 
+    <form method="get" action="{{ path('app_player') }}">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search players by name">
+        <button type="submit">Search</button>
+    </form>
 	</div>
 {% endblock %}
