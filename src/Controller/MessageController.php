@@ -1,56 +1,72 @@
 <?php
-// src/Controller/MessageController.php
+
 namespace App\Controller;
 
 use App\Entity\Message;
 use App\Entity\User;
 use App\Form\MessageType;
+use App\Repository\FriendshipRepository;
 use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+
+// use function Symfony\Component\Clock\now;
 
 #[Route('/message')]
-class MessageController extends AbstractController
+final class MessageController extends AbstractController
 {
-    #[Route('/', name: 'messages_list')]
-    public function index(MessageRepository $messageRepository): Response
-    {
-        $user = $this->getUser();
-        $messages = $messageRepository->findBy(['receiver' => $user], ['createdAt' => 'DESC']);
+    #[Route('/{id}', name: 'message_index')]
 
-        return $this->render('message/index.html.twig', [
-            'messages' => $messages,
-        ]);
-    }
-
-    #[Route('/new/{id}', name: 'message_new')]
-    public function new(int $id, Request $request, User $receiver, EntityManagerInterface $em, UserRepository $userRepository): Response
+    public function index(int $id, Request $request, ?User $receiver, EntityManagerInterface $em, UserRepository $userRepository, MessageRepository $messageRepository, FriendshipRepository $friendshipRepository): Response
     {
-        $message = new Message();
-        $message->setSender($this->getUser());
+        $sender = $this->getUser();
         $receiver = $userRepository->findUserById($id);
+
+        //OPHALEN VRIENDEN VOOR DROPDOWN
+        $friendIds = $friendshipRepository->findFriendsIdByUserId($sender);
+        $friends = $userRepository->findFriendsByIds($friendIds);
+
+
+        //OPHALEN CONVERSATIE
+        if (!isset($receiver)) {
+            $conversation = [];
+        }
+
+        if (isset($receiver)) {
+            $conversation = $messageRepository->findMessagesBetweenUsers($sender, $receiver);
+        }
+
+
+
+        // NIEUW BERICHT VERSTUREN
+        $message = new Message();
+        $message->setSender($sender);
         $message->setReceiver($receiver);
 
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $message->setCreatedAt(new DateTimeImmutable("now"));
+
+            $message->setCreatedAt(new DateTimeImmutable('now'));
             $message->setIsRead(false);
             $em->persist($message);
             $em->flush();
-
-            return $this->redirectToRoute('messages_list');
+            //refresh van de pagina
+            return new RedirectResponse($request->getUri());
         }
 
-        return $this->render('message/new.html.twig', [
+        return $this->render('message/index.html.twig', [
             'form' => $form->createView(),
+            'conversation' => $conversation,
+            'receiverId' => $id,
+            'friends' => $friends,
         ]);
     }
 }
-
