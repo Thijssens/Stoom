@@ -28,10 +28,19 @@
 			</nav>
 			<div>
 				{% if is_granted('ROLE_USER') %}
-					{# {% if user is defined %} #}
-					<a href="{{ path('app_profile_show') }}" class="button">My profile</a>
+					<a href="{{ path('app_profile_show') }}" class="button">{{userEmail}}</a>
 					{# nog enkel laten zien wanneer je een vriend hebt #}
-					<a href="{{ path('message_index', { id: 0})}}" class="button">Message</a>
+					{% if numberOfFriends is defined and numberOfFriends > 0 %}
+						<a href="{{ path('message_index', { id: 0})}}" class="button">Message</a>
+					{% endif %}
+					{% if (unreadMessagesCount is defined) and (unreadMessagesCount > 0) %}
+						{# <span id="unread-messages">{{unreadMessages}}</span> #}
+
+						<a id="unread-messages" href="{{ path('message_index', { id: 0})}}">{{unreadMessagesCount}}</a>
+
+
+					{% endif %}
+
 
 					{# {% endif %} #}
 

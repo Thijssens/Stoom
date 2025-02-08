@@ -17,15 +17,46 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-    public function findMessagesBetweenUsers(User $user1, User $user2)
+    public function findMessagesBetweenUsers(User $user1, User $user2): array
     {
         return $this->createQueryBuilder('m')
             ->where('(m.sender = :user1 AND m.receiver = :user2) OR (m.sender = :user2 AND m.receiver = :user1)')
-            ->setParameter('user1' , $user1)
-            ->setParameter( 'user2', $user2)
+            ->setParameter('user1', $user1)
+            ->setParameter('user2', $user2)
             ->orderBy('m.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findUnreadMessages(User $user): array
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.receiver = :user AND m.isRead = false')
+            ->setParameter('user', $user)
+            ->orderBy('m.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findSentMessages(User $user): array
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.sender = :user')
+            ->setParameter('user', $user)
+            ->orderBy('m.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findMessageById($value): ?Message
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     //    /**
