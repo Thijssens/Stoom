@@ -49,6 +49,16 @@ class GameRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findGameById($value): ?Game
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
 
 
     //    /**
