@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
 {
+    private const SALT = 'psdoijes^lpdhk,seiuhgreop^';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -171,5 +173,20 @@ class Game
         }
 
         return $this;
+    }
+
+    public function generateApiKey() : string
+    {
+        return uniqid('', true);
+    }
+
+    public function getFullLink(User $user) : string
+    {
+        return $this->link . '?gameId='. $this->getId() . '&userId=' . $user->getId() . '&hash=' . $this->getHash($user);
+    }
+
+    public function getHash(User $user) : string
+    {
+        return sha1($this->getId() . $user->getId() . self::SALT);
     }
 }

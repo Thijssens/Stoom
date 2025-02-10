@@ -15,6 +15,7 @@ use App\Repository\FriendshipRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AchievementRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,6 +43,7 @@ class APIController extends AbstractController
         $date = $data['date'] ?? null;
         $gameId = $data['gameId'] ?? null;
         $userId = $data['userId'] ?? null;
+        $hash = $data['hash'] ?? null;
 
         //vind game en user bij Id om door te geven in de achievement setters
         if (!is_int($gameId) || !is_int($userId)) {
@@ -53,9 +55,14 @@ class APIController extends AbstractController
         //als er geen waarde is meegegeven voor de velden worden deze op null gezet
         //we moeten aldus nog een extra controle doen op de waarde null want de velden
         //mogen in de databank niet null zijn (een foutmelding terug sturen)
-        if (!is_string($name) || !is_string($image) || !is_string($date) || !is_object($game) || !is_object($user)) {
+        if (!is_string($name) || !is_string($image) || !is_string($date) || !($game instanceof Game) || !($user instanceof User)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
+
+        if ($game->getHash($user) !== $hash) {
+            throw new AccessDeniedException();
+        }
+
         $achievement = new Achievement();
         $achievement->setName($name);
         $achievement->setImage($image);
