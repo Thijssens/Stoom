@@ -5,8 +5,9 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\Entity\User;
 use App\Form\GameType;
-use App\Repository\FriendshipRepository;
 use App\Repository\GameRepository;
+use App\Repository\FriendshipRepository;
+use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,22 +19,25 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class GameController extends AbstractController
 {
     #[Route(name: 'app_game_index', methods: ['GET'])]
-    public function index(GameRepository $gameRepository, Security $security, FriendshipRepository $friendshipRepository): Response
+    public function index(GameRepository $gameRepository, Security $security, FriendshipRepository $friendshipRepository, MessageRepository $messageRepository): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             /** @var User $user */      //zo maken we gebruik van het echte user object
             $user = $this->getUser();
+            // $unreadMessages = $messageRepository->findUnreadMessages($user);
         }
         //dd($this->getUser());
         if ($security->isGranted('ROLE_ADMIN')) {
             return $this->render('game/index.html.twig', [
                 'games' => $gameRepository->findAll(),
                 'user' => $user,
+                // 'unreadMessages' => count($unreadMessages),
             ]);
         } elseif ($security->isGranted('ROLE_USER')) {
             $friendIds = $friendshipRepository->findFriendsIdByUserId($user->getId());
             return $this->render('game/index.html.twig', [
                 'games' => $gameRepository->findViewableGames($user->getId(), $friendIds),
+                // 'unreadMessages' => count($unreadMessages),
             ]);
         } else {
             return $this->render('game/index.html.twig', [
@@ -51,6 +55,7 @@ final class GameController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
         }
+
         $friends = $friendshipRepository->findFriendsByUserId($user->getId());
         $games = [];
         foreach ($friends as $friend) {
@@ -101,18 +106,25 @@ final class GameController extends AbstractController
     }
 
     #[Route('/game/{id}', name: 'app_game_show', methods: ['GET'])]
-    public function show(Game $game): Response
+    public function show(Game $game, Security $security): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$security->isGranted('ROLE_ADMIN') && $game->getOwner() !== $user->getId()) {
+            die('Game not found');
+        }
         return $this->render('game/show.html.twig', [
             'game' => $game,
         ]);
     }
 
     #[Route('/game/{id}/edit', name: 'app_game_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Game $game, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Game $game, EntityManagerInterface $entityManager, Security $security): Response
     {
         $form = $this->createForm(GameType::class, $game);
         $form->handleRequest($request);
+        /** @var User $user */
+        $user = $this->getUser();
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -128,6 +140,11 @@ final class GameController extends AbstractController
             return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        // Check if the game belongs to the authenticated user
+        if (!$security->isGranted('ROLE_ADMIN') && $game->getOwner() !== $user->getId()) {
+            die('Game not found');
+        }
+
         return $this->render('game/edit.html.twig', [
             'game' => $game,
             'form' => $form,
@@ -141,6 +158,7 @@ final class GameController extends AbstractController
             $entityManager->remove($game);
             $entityManager->flush();
         }
+
 
         return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
     }

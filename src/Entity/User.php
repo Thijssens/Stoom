@@ -63,10 +63,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'receiver', orphanRemoval: true)]
     private Collection $receivedMessages;
 
+    /**
+     * @var Collection<int, Achievement>
+     */
+    #[ORM\OneToMany(targetEntity: Achievement::class, mappedBy: 'userId', orphanRemoval: true)]
+    private Collection $achievements;
+
     public function __construct()
     {
         $this->sentMessages = new ArrayCollection();
         $this->receivedMessages = new ArrayCollection();
+        $this->achievements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -258,6 +265,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($receivedMessage->getReceiver() === $this) {
                 $receivedMessage->setReceiver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Achievement>
+     */
+    public function getAchievements(): Collection
+    {
+        return $this->achievements;
+    }
+
+    public function addAchievement(Achievement $achievement): static
+    {
+        if (!$this->achievements->contains($achievement)) {
+            $this->achievements->add($achievement);
+            $achievement->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAchievement(Achievement $achievement): static
+    {
+        if ($this->achievements->removeElement($achievement)) {
+            // set the owning side to null (unless already changed)
+            if ($achievement->getUser() === $this) {
+                $achievement->setUser(null);
             }
         }
 

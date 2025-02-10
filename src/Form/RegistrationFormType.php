@@ -23,33 +23,39 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
+            ->add('email', null, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter your email address',
+                    ]),
+                    new \Symfony\Component\Validator\Constraints\Email([
+                        'message' => 'Please enter a valid email address',
+                    ]),
+                ],
+            ])
             ->add('username')
-            
-
             ->add('profilepicture', FileType::class, [
                 'label' => 'Profile Picture',
                 'constraints' => [
                     new Image([
                         'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
                         'mimeTypesMessage' => 'Please upload a valid image (JPEG, PNG or WEBP)',
-                        'maxSize' => '10M', 
+                        'maxSize' => '10M',
                         'maxSizeMessage' => 'The maximum allowed file size is 10MB.',
                     ]),
                 ],
                 'required' => false,
             ])
-
             ->add('birthday', BirthdayType::class, [
-                'widget' => 'choice', // Dropdowns for day, month, year
-                'format' => 'yyyy-MM-dd', // Adjust to match your expected date format
+                'widget' => 'choice',
+                'format' => 'yyyy-MM-dd',
                 'placeholder' => [
-                    'year' => 'Year', 
-                    'month' => 'Month', 
+                    'year' => 'Year',
+                    'month' => 'Month',
                     'day' => 'Day'
                 ],
-                'input' => 'datetime_immutable', // Ensure data is converted to DateTimeImmutable
-                'required' => false, // Makes the field optional
+                'input' => 'datetime_immutable',
+                'required' => false,
             ])
             ->add('gender', ChoiceType::class, [
                 'choices' => [
@@ -57,10 +63,10 @@ class RegistrationFormType extends AbstractType
                     'Female' => 'female',
                     'Other' => 'other',
                 ],
-                'placeholder' => 'Select your gender', // Placeholder for dropdown
-                'required' => false, // Makes the field optional
-                'expanded' => false, // Use a dropdown (default)
-                'multiple' => false, // Single choice only
+                'placeholder' => 'Select your gender',
+                'required' => false,
+                'expanded' => false,
+                'multiple' => false,
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
@@ -71,8 +77,6 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
@@ -82,13 +86,10 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                 ],
             ])
-
-            // van chatgpt begrijp nog niet
             ->add('confirmPassword', PasswordType::class, [
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],

@@ -2,57 +2,83 @@
 
 {% block body %}
 	<div class="container">
+
+
 		<div
-			class="message-header">
+			id="message-header">
 			{# naam van de andere player #}
-			<h2>
-				Player xxx
-			</h2>
+			{% if receiver != null %}
+				<h2>{{receiver.username}}</h2>
+			{% endif %}
+
 			<select name="friends" id="friends-select">
-				<option value="">
-					My friends
-				</option>
+				<option value="">My Friends</option>
 				{% for friend in friends %}
-					<option value="{{ path('message_index', { id: friend.id }) }}">
-						{{ friend.username }}
-					</option>
+					<option value="{{path('message_index', { id: friend.id})}}">{{ friend.username }}</option>
 				{% endfor %}
 			</select>
-		</div>
 
-		<div class"message-content">
+		</div>
+		{# voor als je al vrienden bent #}
+		<div id="message-content">
 			{% for message in conversation %}
 				{% if message.sender.id != receiverId %}
-					<p class="sender">
-						{{message.content}}
-					</p>
+					<p class="sender">{{message.content}}</p>
 				{% endif %}
 				{% if message.sender.id == receiverId %}
-					<p class="receiver">
-						{{message.content}}
-					</p>
+					<p class="receiver">{{message.content}}</p>
 				{% endif %}
 			{% endfor %}
 
+			{# voor de friend requests #}
+			{% if friendRequests is defined and friendRequests|length > 0 %}
+				{% for request in friendRequests %}
+					{# {% if(player.id != user.id) %} #}
+					<div class="player">
+						<div class="player-img">
+							<img src="{{asset(request.sender.profilepicture) }}">
+						</div>
+						<div class="player-data">
+							<h2>{{request.sender.username}}</h2>
+						</div>
+						<div class="player-controls">
+							<a href="{{path('message_request_accept', { id: request.sender.id})}}" class="button">Accept</a>
+
+
+							<a href="{{path('message_request_decline', { id: request.id})}}" class="button">Decline</a>
+
+						</div>
+					</div>
+					{# {% endif %} #}
+				{% endfor %}
+
+
+			{% endif %}
+
+
 		</div>
-		<div class="message-new">
-			{{ form_start(form) }}
-			{{ form_row(form.content) }}
-			<button type="submit">
-				Verzenden
-			</button>
-			{{ form_end(form) }}
-		</div>
+
+		{# kijken of de conversatie leeg is, zo ja zorgen dat er geen bericht kan verstuurd worden #}
+
+		{% if conversation|length > 1 %}
+			<div id="message-new">
+				{{ form_start(form) }}{{ form_row(form.content) }}
+				<button type="submit">
+					Verzenden</button>
+				{{ form_end(form) }}
+			</div>
+		{% endif %}
+
 
 	</div>
+
 	<script>
 		document.getElementById('friends-select').addEventListener('change', function () {
-			let url = this.value;
-			if (url) {
-				window.location.href = url;
-			}
-		});
+let url = this.value;
+if (url) {
+window.location.href = url;
+}
+});
 	</script>
-
 
 {% endblock %}
