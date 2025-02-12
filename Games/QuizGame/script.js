@@ -289,10 +289,7 @@ function counterChecker(question) {
     showPlayedTime();
     Swal.fire({
       title: "Spel is voorbij",
-      text:
-        "Je hebt " +
-        document.querySelector("#score-number").innerText +
-        " punten",
+      text: "Je hebt " + score + " punten",
       confirmButtonText: "OK",
     });
   }
@@ -331,6 +328,8 @@ function showPlayedTime() {
   let hours = 0;
   let minutes = 0;
   let seconds = 0;
+
+  saveScores(secondsPlayed);
 
   if (secondsPlayed < 60) {
     seconds = secondsPlayed;
@@ -433,6 +432,30 @@ async function getPlayer() {
 
 function showPlayerInfo(playerInfo) {
   document.querySelector("#player-name").innerText = playerInfo.username;
+  let link = "http://localhost/Stoom/public/" + playerInfo.profilePicture;
+  document.querySelector("#player-img").src = link;
+}
+
+//SCORE
+
+async function saveScores(secondsPlayed) {
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+  const postData = {
+    score: score,
+    time: secondsPlayed,
+    date: formattedDate,
+    apiKey: apiKey,
+    userId: Number(userId),
+    hash: hash,
+  };
+
+  let response = await fetch(BASE_URL + "/score/save", {
+    method: "POST",
+    body: JSON.stringify(postData),
+  });
+  let data = await response.json();
 }
 
 getAchievements();
