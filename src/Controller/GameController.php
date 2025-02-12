@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/')]
 final class GameController extends AbstractController
@@ -120,6 +121,7 @@ final class GameController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+
         if (!$security->isGranted('ROLE_ADMIN') && $game->getOwner() !== $user->getId()) {
             die('Game not found');
         }
@@ -181,5 +183,94 @@ final class GameController extends AbstractController
             $game->setLink($gameLink);
         }
         return $games;
+    }
+
+    #[Route('/data/json', name: 'json_data')]
+    public function getJsonData(): JsonResponse
+    {
+        $data = [
+            "info" => [
+                "_postman_id" => "b054f309-c050-49b1-b083-2bb3cc4e6d30",
+                "name" => "Stoom",
+                "schema" => "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                "_exporter_id" => "38227772"
+            ],
+            "item" => [
+                [
+                    "name" => "Save achievements",
+                    "request" => [
+                        "method" => "POST",
+                        "header" => [],
+                        "body" => [
+                            "mode" => "raw",
+                            "raw" => "{\r\n    \"name\": \"string\",\r\n    \"image\": \"string\",\r\n    \"date\": \"string\",\r\n    \"apiKey\": \"string\",\r\n    \"userId\": \"int\",\r\n    \"hash\": \"string\"\r\n}",
+                            "options" => ["raw" => ["language" => "json"]]
+                        ],
+                        "url" => [
+                            "raw" => "{{url}}/achievement/save",
+                            "host" => ["{{url}}"],
+                            "path" => ["achievement", "save"]
+                        ]
+                    ],
+                    "response" => []
+                ],
+                [
+                    "name" => "Save score",
+                    "request" => [
+                        "method" => "POST",
+                        "header" => [],
+                        "body" => [
+                            "mode" => "raw",
+                            "raw" => "{\r\n    \"score\": \"int\",\r\n    \"time\": \"int\",\r\n    \"date\": \"string\",\r\n    \"apiKey\": \"string\",\r\n    \"userId\": \"int\",\r\n    \"hash\": \"string\"\r\n}",
+                            "options" => ["raw" => ["language" => "json"]]
+                        ],
+                        "url" => [
+                            "raw" => "{{url}}/score/save",
+                            "host" => ["{{url}}"],
+                            "path" => ["score", "save"]
+                        ]
+                    ],
+                    "response" => []
+                ],
+                [
+                    "name" => "Achievements",
+                    "request" => [
+                        "method" => "GET",
+                        "header" => [],
+                        "url" => [
+                            "raw" => "{{url}}/achievement/get?apiKey=&userId=&hash=",
+                            "host" => ["{{url}}"],
+                            "path" => ["achievement", "get"],
+                            "query" => [
+                                ["key" => "apiKey", "value" => ""],
+                                ["key" => "userId", "value" => ""],
+                                ["key" => "hash", "value" => ""]
+                            ]
+                        ]
+                    ],
+                    "response" => []
+                ],
+                [
+                    "name" => "Player info",
+                    "request" => [
+                        "method" => "GET",
+                        "header" => [],
+                        "url" => [
+                            "raw" => "{{url}}/player?apiKey=&userId=&hash=",
+                            "host" => ["{{url}}"],
+                            "path" => ["player"],
+                            "query" => [
+                                ["key" => "apiKey", "value" => ""],
+                                ["key" => "userId", "value" => ""],
+                                ["key" => "hash", "value" => ""]
+                            ]
+                        ]
+                    ],
+                    "response" => []
+                ]
+            ]
+        ];
+
+        return new JsonResponse($data);
     }
 }
