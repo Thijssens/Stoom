@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Game</title>
+    <!-- om een mooiere alert box te maken via sweetalert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10" />
+    <link rel="stylesheet" href="styles.css" />
+    <script async defer src="script.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <h1>Quiz Game</h1>
+      <h3 id="player-name">Speler xxx</h3>
+    </header>
+    <div class="container">
+      <section id="parameters">
+        <div id="category-container">
+          <h3 class="parameters-title">Category</h3>
+          <button class="category-btn" id="11">Films</button>
+          <button class="category-btn" id="15">Videogames</button>
+          <button class="category-btn" id="18">Computers</button>
+          <button class="category-btn" id="17">Science & Nature</button>
+          <button class="category-btn" id="22">Geography</button>
+        </div>
+        <div id="difficulty-container">
+          <h3 class="parameters-title">Difficulty</h3>
+          <button class="difficulty-btn" id="easy">Easy</button>
+          <button class="difficulty-btn" id="medium">Medium</button>
+          <button class="difficulty-btn" id="hard">Hard</button>
+        </div>
+        <div id="play-container">
+          <button id="play-button">PLAY</button>
+          <p id="alert"></p>
+        </div>
+      </section>
+      <section id="quiz">
+        <div id="quiz-container">
+          <div id="question-container">
+            <p id="question"></p>
+          </div>
+
+          <div id="answers-container">
+            <button class="answer-btn" id="answer1">...</button>
+            <button class="answer-btn" id="answer2">...</button>
+            <button class="answer-btn" id="answer3">...</button>
+            <button class="answer-btn" id="answer4">...</button>
+          </div>
+
+          <div id="next-button-container">
+            <button id="next-button" disabled="true">Next Question</button>
+          </div>
+        </div>
+        <div id="score-container">
+          <p>SCORE</p>
+          <h1 id="score-number">0</h1>
+        </div>
+      </section>
+      <section id="achievements">
+        <table>
+          <tr>
+            <td>
+              <img
+                id="bronze"
+                src="images/MedailleBrons.png"
+                alt=""
+                class="not-achieved"
+              />
+              <img
+                id="silver"
+                src="images/MedailleZilver.png"
+                alt=""
+                class="not-achieved"
+              />
+              <img
+                id="gold"
+                src="images/MedailleGoud.png"
+                alt=""
+                class="not-achieved"
+              />
+            </td>
+            <td>
+              <img
+                id="platinum"
+                src="images/MedaillePlatinum.png"
+                alt=""
+                class="not-achieved"
+              />
+            </td>
+            <td id="time-played"></td>
+          </tr>
+        </table>
+      </section>
+    </div>
+    <!-- om een mooiere alert box te maken via sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </body>
+</html>

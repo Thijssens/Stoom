@@ -13,6 +13,8 @@
 					<img src="{{asset(user.profilepicture) }}">
 				</div>
 				<div>
+					<p>ID:
+						{{ user.id }}</p>
 					<p>Username:
 						{{ user.username }}</p>
 					<p>Email :
@@ -21,13 +23,9 @@
 						{{ user.gender }}</p>
 					<p>Birthday:
 						{{ user.birthday|date('Y-m-d')}}</p>
-
-
 				</div>
-
 			</div>
 			<a href="{{ path('app_profile_edit') }}" class="button">Edit</a>
-
 		</div>
 
 		<div class="container">
@@ -59,27 +57,42 @@
 						{% endif %}
 					</div>
 				</div>
-
-
 			{% else %}
-
 				<p>no records found</p>
+			{% endfor %}
+		</div>
 
+		<div class="container">
+			<h1>My Achievements</h1>
+			{% for achievement in achievements %}
+			<div class="game">
+				<div class="game-img">
+					<img src="{{asset(achievement.image) }}">
+				</div>
+				<div class="game-data">
+					<h2>
+						{{achievement.name}}
+					</h2>
+					<p>{{achievement.date|date('Y-m-d')}}</p>
+						
+					
+						
+				</div>
+				
+			</div>
 			{% endfor %}
 
 		</div>
-		<div class="container">
-			<h1>My Achievements</h1>
-		</div>
+
 		<div class="container">
 
 			<h1>My Stats</h1>
 		</div>
+
 		<div class="container">
 
 			<h1>My Chart</h1>
 		</div>
-
 
 	</div>
 

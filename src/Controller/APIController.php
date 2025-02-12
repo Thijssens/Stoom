@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Encoder\JsonEncode;
 
 #[Route('/api', name: "api_")]
 class APIController extends AbstractController
@@ -41,15 +42,15 @@ class APIController extends AbstractController
         $name = $data['name'] ?? null;
         $image = $data['image'] ?? null;
         $date = $data['date'] ?? null;
-        $gameId = $data['gameId'] ?? null;
+        $apiKey = $data['apiKey'] ?? null;
         $userId = $data['userId'] ?? null;
         $hash = $data['hash'] ?? null;
 
         //vind game en user bij Id om door te geven in de achievement setters
-        if (!is_int($gameId) || !is_int($userId)) {
+        if (!is_string($apiKey) || !is_int($userId)) {
             return new JsonResponse(['error' => 'Invalid user or game'], 400);
         }
-        $game = $gameRepository->findGameById($gameId);
+        $game = $gameRepository->findGameByApiKey($apiKey);
         $user = $userRepository->findUserById($userId);
 
         //als er geen waarde is meegegeven voor de velden worden deze op null gezet
@@ -60,7 +61,7 @@ class APIController extends AbstractController
         }
 
         if ($game->getHash($user) !== $hash) {
-            throw new AccessDeniedException();
+            return new JsonResponse(['error' => 'vuile hacker'], 400);
         }
 
         $achievement = new Achievement();
@@ -79,42 +80,69 @@ class APIController extends AbstractController
     }
 
 
-    #[Route('/achievement/get', name: 'achievement_get', methods: ['POST'])]
+    #[Route('/achievement/get', name: 'achievement_get', methods: ['GET'])]
     public function getAchievement(Request $request, AchievementRepository $achievementRepository, GameRepository $gameRepository, UserRepository $userRepository): JsonResponse
     {
-        // JSON-data ophalen en omzetten naar een array
-        $data = json_decode($request->getContent(), true);
 
-        // Controleer of de data geldig is
-        if (!$data) {
-            return new JsonResponse(['error' => 'Invalid JSON'], 400);
+
+        $apiKey = $_GET['apiKey'] ?? null;
+        $userId = $_GET['userId'] ?? null;
+        $hash = $_GET['hash'] ?? null;
+
+        $userId = intval($userId) ?? null;
+        if (!is_string($apiKey) || !is_int($userId) || !is_string($hash)) {
+            return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
-        $gameId = $data['gameId'] ?? null;
-        $userId = $data['userId'] ?? null;
+        $game = $gameRepository->findGameByApiKey($apiKey);
 
+        $user = $userRepository->findUserById($userId);
 
-        //vind game en user bij Id om door te geven in de achievement setters
-        if (!is_int($gameId) || !is_int($userId)) {
-            return new JsonResponse(['error' => 'Invalid userId or GameId'], 400);
+        if ($game->getHash($user) !== $hash) {
+            return new JsonResponse(['error' => 'vuile hacker'], 400);
         }
 
-        // $game = $gameRepository->findGameById($gameId);
-        // $user = $userRepository->findUserById($userId);
-
-        //achievements ophalen uit databank
-        $achievements = $achievementRepository->findAchievementByGameIdAndUserId($gameId, $userId);
+        $achievements = $achievementRepository->findAchievementByGameIdAndUserId($game->getId(), $userId);
         $achievementNames = [];
         foreach ($achievements as $achievement) {
             array_push($achievementNames, $achievement->getName());
         }
+        return new JsonResponse($achievementNames);
 
-        return new JsonResponse([$achievementNames]);
+
+        // // JSON-data ophalen en omzetten naar een array
+        // $data = json_decode($request->getContent(), true);
+
+        // // Controleer of de data geldig is
+        // if (!$data) {
+        //     return new JsonResponse(['error' => 'Invalid JSON'], 400);
+        // }
+
+        // $gameId = $data['gameId'] ?? null;
+        // $userId = $data['userId'] ?? null;
+
+
+        // //vind game en user bij Id om door te geven in de achievement setters
+        // if (!is_int($gameId) || !is_int($userId)) {
+        //     return new JsonResponse(['error' => 'Invalid userId or GameId'], 400);
+        // }
+
+        // // $game = $gameRepository->findGameById($gameId);
+        // // $user = $userRepository->findUserById($userId);
+
+        // //achievements ophalen uit databank
+        // $achievements = $achievementRepository->findAchievementByGameIdAndUserId($gameId, $userId);
+        // $achievementNames = [];
+        // foreach ($achievements as $achievement) {
+        //     array_push($achievementNames, $achievement->getName());
+        // }
+
+        // return new JsonResponse([$achievementNames]);
     }
 
 
     #[Route('/score/save', name: 'score_save', methods: ['POST'])]
-    public function saveScore(Request $request, EntityManagerInterface $em, GameRepository $gameRepository, UserRepository $userRepository): JsonResponse
+    public function saveScore(GameRepository $gameRepository, Request $request, EntityManagerInterface $em, UserRepository $userRepository): JsonResponse
     {
         // JSON-data ophalen en omzetten naar een array
         $data = json_decode($request->getContent(), true);
@@ -128,19 +156,24 @@ class APIController extends AbstractController
         $score = $data['score'] ?? null;
         $time = $data['time'] ?? null;
         $date = $data['date'] ?? null;
-        $gameId = $data['gameId'] ?? null;
+        $apiKey = $data['apiKey'] ?? null;
         $userId = $data['userId'] ?? null;
+        $hash = $data['hash'] ?? null;
 
         //vind game en user bij Id om door te geven in de achievement setters
-        if (!is_int($gameId) || !is_int($userId)) {
+        if (!is_string($apiKey) || !is_int($userId)) {
             return new JsonResponse(['error' => 'Invalid userId or GameId'], 400);
         }
 
-        $game = $gameRepository->findGameById($gameId);
+        $game = $gameRepository->findGameByApiKey($apiKey);
         $user = $userRepository->findUserById($userId);
 
         if (!is_int($score) || !is_int($time) || !is_string($date) || !is_object($game) || !is_object($user)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
+        }
+
+        if ($game->getHash($user) !== $hash) {
+            return new JsonResponse(['error' => 'vuile hacker'], 400);
         }
         $scoreObject = new Score();
         $scoreObject->setScore($score);
@@ -158,34 +191,61 @@ class APIController extends AbstractController
     }
 
 
-    #[Route('/player', name: 'player_fetch', methods: ['POST'])]
-    public function fetchPlayer(Request $request, UserRepository $userRepository): JsonResponse
+    #[Route('/player', name: 'player_get', methods: ['GET'])]
+    public function fetchPlayer(GameRepository $gameRepository, Request $request, UserRepository $userRepository): JsonResponse
     {
-        // JSON-data ophalen en omzetten naar een array
-        $data = json_decode($request->getContent(), true);
 
-        // Controleer of de data geldig is
-        if (!$data) {
-            return new JsonResponse(['error' => 'Invalid JSON'], 400);
+        $apiKey = $_GET['apiKey'] ?? null;
+        $userId = $_GET['userId'] ?? null;
+        $hash = $_GET['hash'] ?? null;
+
+        $userId = intval($userId) ?? null;
+        if (!is_string($apiKey) || !is_int($userId) || !is_string($hash)) {
+            return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
-        $userId = $data['userId'] ?? null;
+        $game = $gameRepository->findGameByApiKey($apiKey);
 
+        $user = $userRepository->findUserById($userId);
 
-        //vind game en user bij Id om door te geven in de achievement setters
-        if (!is_int($userId)) {
-            return new JsonResponse(['error' => 'Invalid userId'], 400);
+        if ($game->getHash($user) !== $hash) {
+            return new JsonResponse(['error' => 'vuile hacker'], 400);
         }
 
         //user ophalen uit databank
-        $user = $userRepository->findUserById($userId);
         $userData = [
             'username' => $user->getUsername(),
             'profilePicture' => $user->getProfilepicture()
         ];
 
+        return new JsonResponse($userData);
 
 
-        return new JsonResponse([$userData]);
+        // // JSON-data ophalen en omzetten naar een array
+        // $data = json_decode($request->getContent(), true);
+
+        // // Controleer of de data geldig is
+        // if (!$data) {
+        //     return new JsonResponse(['error' => 'Invalid JSON'], 400);
+        // }
+
+        // $userId = $data['userId'] ?? null;
+
+
+        // //vind game en user bij Id om door te geven in de achievement setters
+        // if (!is_int($userId)) {
+        //     return new JsonResponse(['error' => 'Invalid userId'], 400);
+        // }
+
+        // //user ophalen uit databank
+        // $user = $userRepository->findUserById($userId);
+        // $userData = [
+        //     'username' => $user->getUsername(),
+        //     'profilePicture' => $user->getProfilepicture()
+        // ];
+
+
+
+        // return new JsonResponse([$userData]);
     }
 }

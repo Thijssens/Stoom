@@ -30,6 +30,16 @@ class AchievementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAchievementByUserId(int $userId): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.user = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('a.game', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Achievement[] Returns an array of Achievement objects
     //     */

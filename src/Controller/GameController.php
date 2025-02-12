@@ -26,17 +26,26 @@ final class GameController extends AbstractController
             $user = $this->getUser();
             // $unreadMessages = $messageRepository->findUnreadMessages($user);
         }
+
         //dd($this->getUser());
         if ($security->isGranted('ROLE_ADMIN')) {
+            $retrievedGames = $gameRepository->findAll();
+            $games = $this->setFullLink($retrievedGames, $user);
+
+
             return $this->render('game/index.html.twig', [
-                'games' => $gameRepository->findAll(),
+                'games' => $games,
                 'user' => $user,
                 // 'unreadMessages' => count($unreadMessages),
             ]);
         } elseif ($security->isGranted('ROLE_USER')) {
             $friendIds = $friendshipRepository->findFriendsIdByUserId($user->getId());
+            $retrievedGames = $gameRepository->findViewableGames($user->getId(), $friendIds);
+            $games = $this->setFullLink($retrievedGames, $user);
+
             return $this->render('game/index.html.twig', [
-                'games' => $gameRepository->findViewableGames($user->getId(), $friendIds),
+                'games' => $games,
+                'user' => $user
                 // 'unreadMessages' => count($unreadMessages),
             ]);
         } else {
@@ -80,6 +89,7 @@ final class GameController extends AbstractController
             $user = $this->getUser();
             $userID = $user->getId();
             $game->setOwner($userID);
+            $game->setApiKey($game->generateApiKey());
 
             $file = $form->get('thumbnail')->getData();
 
@@ -161,5 +171,15 @@ final class GameController extends AbstractController
 
 
         return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function setFullLink(array $games, User $user): array
+    {
+
+        foreach ($games as $game) {
+            $gameLink = $game->getFullLink($user);
+            $game->setLink($gameLink);
+        }
+        return $games;
     }
 }

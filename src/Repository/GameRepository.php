@@ -59,6 +59,18 @@ class GameRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findGameByApiKey($value): ?Game
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.apiKey = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+
+
 
 
     //    /**

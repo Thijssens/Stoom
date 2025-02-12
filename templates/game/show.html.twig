@@ -3,25 +3,24 @@
 {% block title %}Game{% endblock %}
 
 {% block body %}
-    <h1>Game</h1>
+<div class="container">
+    <h1>{{ game.name }}</h1>
+    <img src ="{{asset(game.thumbnail) }}" class="game-show-img">
 
-    <table class="table">
+
+    <table class="game-table">
         <tbody>
             <tr>
-                <th>Id</th>
+                <th>Game Id</th>
                 <td>{{ game.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ game.name }}</td>
-            </tr>
-            <tr>
-                <th>Thumbnail</th>
-                <td><img src ="{{asset(game.thumbnail) }}"></td>
             </tr>
             <tr>
                 <th>Link</th>
                 <td>{{ game.link }}</td>
+            </tr>
+            <tr>
+                <th>API Key</th>
+                <td>{{ game.apiKey }}</td>
             </tr>
             <tr>
                 <th>IsPublic</th>
@@ -29,8 +28,10 @@
             </tr>
         </tbody>
     </table>
+        <a href="{{ path('app_game_index') }}">back to list</a>
 
-    <a href="{{ path('app_game_index') }}">back to list</a>
+</div>
+
 
     {# <a href="{{ path('app_game_edit', {'id': game.id}) }}">edit</a> #}
 

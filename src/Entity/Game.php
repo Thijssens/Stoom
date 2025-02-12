@@ -32,22 +32,25 @@ class Game
     #[ORM\Column]
     private ?int $owner = null;
 
-    /**
-     * @var Collection<int, Score>
-     */
-    #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'gameId', orphanRemoval: true)]
-    private Collection $scores;
+    // /**
+    //  * @var Collection<int, Score>
+    //  */
+    // #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'gameId', orphanRemoval: true)]
+    // private Collection $scores;
 
-    /**
-     * @var Collection<int, Achievement>
-     */
-    #[ORM\OneToMany(targetEntity: Achievement::class, mappedBy: 'gameId')]
-    private Collection $achievements;
+    // /**
+    //  * @var Collection<int, Achievement>
+    //  */
+    // #[ORM\OneToMany(targetEntity: Achievement::class, mappedBy: 'gameId')]
+    // private Collection $achievements;
+
+    #[ORM\Column(length: 255)]
+    private ?string $apiKey = null;
 
     public function __construct()
     {
-        $this->scores = new ArrayCollection();
-        $this->achievements = new ArrayCollection();
+        // $this->scores = new ArrayCollection();
+        // $this->achievements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,78 +118,90 @@ class Game
         return $this;
     }
 
-    /**
-     * @return Collection<int, Score>
-     */
-    public function getScores(): Collection
-    {
-        return $this->scores;
-    }
+    // /**
+    //  * @return Collection<int, Score>
+    //  */
+    // public function getScores(): Collection
+    // {
+    //     return $this->scores;
+    // }
 
-    public function addScore(Score $score): static
-    {
-        if (!$this->scores->contains($score)) {
-            $this->scores->add($score);
-            $score->setGame($this);
-        }
+    // public function addScore(Score $score): static
+    // {
+    //     if (!$this->scores->contains($score)) {
+    //         $this->scores->add($score);
+    //         $score->setGame($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeScore(Score $score): static
-    {
-        if ($this->scores->removeElement($score)) {
-            // set the owning side to null (unless already changed)
-            if ($score->getGame() === $this) {
-                $score->setGame(null);
-            }
-        }
+    // public function removeScore(Score $score): static
+    // {
+    //     if ($this->scores->removeElement($score)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($score->getGame() === $this) {
+    //             $score->setGame(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    /**
-     * @return Collection<int, Achievement>
-     */
-    public function getAchievements(): Collection
-    {
-        return $this->achievements;
-    }
+    // /**
+    //  * @return Collection<int, Achievement>
+    //  */
+    // public function getAchievements(): Collection
+    // {
+    //     return $this->achievements;
+    // }
 
-    public function addAchievement(Achievement $achievement): static
-    {
-        if (!$this->achievements->contains($achievement)) {
-            $this->achievements->add($achievement);
-            $achievement->setGame($this);
-        }
+    // public function addAchievement(Achievement $achievement): static
+    // {
+    //     if (!$this->achievements->contains($achievement)) {
+    //         $this->achievements->add($achievement);
+    //         $achievement->setGame($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeAchievement(Achievement $achievement): static
-    {
-        if ($this->achievements->removeElement($achievement)) {
-            // set the owning side to null (unless already changed)
-            if ($achievement->getGame() === $this) {
-                $achievement->setGame(null);
-            }
-        }
+    // public function removeAchievement(Achievement $achievement): static
+    // {
+    //     if ($this->achievements->removeElement($achievement)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($achievement->getGame() === $this) {
+    //             $achievement->setGame(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function generateApiKey() : string
+    public function generateApiKey(): string
     {
         return uniqid('', true);
     }
 
-    public function getFullLink(User $user) : string
+    public function getFullLink(User $user): string
     {
-        return $this->link . '?gameId='. $this->getId() . '&userId=' . $user->getId() . '&hash=' . $this->getHash($user);
+        return $this->link . '?apiKey=' . $this->getApiKey() . '&userId=' . $user->getId() . '&hash=' . $this->getHash($user);
     }
 
-    public function getHash(User $user) : string
+    public function getHash(User $user): string
     {
-        return sha1($this->getId() . $user->getId() . self::SALT);
+        return sha1($this->getApiKey() . $user->getId() . self::SALT);
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+
+    public function setApiKey(string $apiKey): static
+    {
+        $this->apiKey = $apiKey;
+
+        return $this;
     }
 }

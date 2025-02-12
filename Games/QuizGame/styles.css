@@ -1,0 +1,165 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  color: white;
+  background-color: darkslategrey;
+  width: 99%;
+  display: flex;
+  padding: 0.5em;
+}
+
+header h1 {
+  align-content: center;
+  width: 75%;
+  padding-left: 1em;
+}
+
+header h3 {
+  align-content: center;
+  width: 25%;
+  text-align: end;
+  padding-right: 1em;
+}
+
+button {
+  color: white;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.container {
+  text-align: center;
+  width: 90%;
+  padding: 20px;
+}
+
+#parameters {
+  padding: 1em;
+  border-bottom: 2px solid darkslategray;
+  margin-bottom: 1em;
+}
+
+#category-container,
+#difficulty-container {
+  padding-bottom: 1.2em;
+}
+
+.parameters-title {
+  padding-bottom: 0.5em;
+}
+
+.category-btn,
+.difficulty-btn,
+#next-button {
+  background-color: #616565;
+}
+
+.category-btn:hover,
+.difficulty-btn:hover,
+#next-button:hover {
+  background-color: #658e8e;
+}
+
+.selected {
+  background-color: #658e8e;
+}
+
+/* wanneer de kloppen disabled zijn worden volgende kleur de  */
+/* backgroundcolor: #efe4e4 */
+
+#play-button {
+  background-color: darkslategray;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+}
+
+/* #play-button:hover {
+  background-color: #658e8e !important;
+} */
+
+#quiz {
+  display: flex;
+  flex-direction: row;
+}
+
+#quiz-container {
+  width: 65%;
+  padding-right: 3em;
+}
+
+#question-container {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+#answers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.answer-btn {
+  background-color: #658e8e;
+}
+
+.answer-btn:hover {
+  background-color: darkslategray;
+}
+
+#next-button-container {
+  margin-top: 20px;
+}
+
+#score-container {
+  border: 3px solid darkslategray;
+  background-color: #dfe8e7;
+  border-radius: 5px;
+  width: 25%;
+  align-content: center;
+  margin: 4em;
+}
+
+#score-container>p {
+  margin-bottom: 2em;
+}
+
+#alert,
+#time-played {
+  font-weight: bolder;
+  color: red;
+}
+
+
+table {
+  width: 100%;
+  margin-top: 2em;
+}
+
+td {
+  /* margin-right: 50px; */
+  text-align: start;
+  width: 35%;
+}
+
+img {
+  width: 100px;
+}
+
+.not-achieved {
+  filter: grayscale(100%) opacity(20%);
+}

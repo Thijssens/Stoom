@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ProfileType;
+use App\Repository\AchievementRepository;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,12 +18,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class ProfileController extends AbstractController
 {
     #[Route('/', name: 'app_profile_show')]
-    public function show(GameRepository $gameRepository): Response
+    public function show(GameRepository $gameRepository, AchievementRepository $achievementRepository): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             /** @var User $user */
             $user = $this->getUser();
             $games = $gameRepository->findGamesByUserId($user->getId());
+            $achievements = $achievementRepository->findAchievementByUserId($user->getId());
         }
 
 
@@ -33,7 +35,8 @@ final class ProfileController extends AbstractController
 
         return $this->render('profile/show.html.twig', [
             'user' => $user,
-            'games' => $games
+            'games' => $games,
+            'achievements' => $achievements
         ]);
     }
 
