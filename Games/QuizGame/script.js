@@ -413,7 +413,7 @@ async function saveAchievements(reward, image) {
   let data = await response.json();
 }
 
-//player
+//player///
 async function getPlayer() {
   const response = await fetch(
     BASE_URL +
