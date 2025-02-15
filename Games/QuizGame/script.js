@@ -174,7 +174,8 @@ function checkAchievements(difficulty) {
     switch (difficulty) {
       case "easy":
         reward = "bronze";
-        image = "games/quizgame/images/medaillebrons.png";
+        image =
+          "http://localhost/stoom/games/quizgame/images/medaillebrons.png";
         achievements.easy = true;
         document.querySelector("#bronze").classList.remove("not-achieved");
         Swal.fire({
@@ -188,7 +189,8 @@ function checkAchievements(difficulty) {
 
       case "medium":
         reward = "silver";
-        image = "games/quizgame/images/medaillezilver.png";
+        image =
+          "http://localhost/stoom/games/quizgame/images/medaillezilver.png";
         achievements.medium = true;
         document.querySelector("#silver").classList.remove("not-achieved");
         Swal.fire({
@@ -202,7 +204,7 @@ function checkAchievements(difficulty) {
 
       case "hard":
         reward = "gold";
-        image = "games/quizgame/images/medaillegoud.png";
+        image = "http://localhost/stoom/games/quizgame/images/medaillegoud.png";
         achievements.hard = true;
         document.querySelector("#gold").classList.remove("not-achieved");
         Swal.fire({
@@ -225,7 +227,7 @@ function checkAchievements(difficulty) {
     achievements.platinum === false
   ) {
     reward = "platinum";
-    image = "games/quizgame/images/medailleplatinum.png";
+    image = "http://localhost/stoom/games/quizgame/images/medailleplatinum.png";
     achievements.platinum = true;
     document.querySelector("#platinum").classList.remove("not-achieved");
     Swal.fire({

@@ -89,7 +89,7 @@ class APIController extends AbstractController
         $userId = $_GET['userId'] ?? null;
         $hash = $_GET['hash'] ?? null;
 
-        $userId = intval($userId) ?? null;
+        $userId = intval($userId);
         if (!is_string($apiKey) || !is_int($userId) || !is_string($hash)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }

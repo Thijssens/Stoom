@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\AdminType;
 use App\Repository\UserRepository;
 use App\Repository\MessageRepository;
 use App\Repository\FriendshipRepository;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 final class PlayerController extends AbstractController
 {
@@ -42,6 +45,35 @@ final class PlayerController extends AbstractController
             'friendsIds' => $friendIds,
             'receiverIds' => $receiverIds,
             // 'sentMessages' => $sentMessages,
+        ]);
+    }
+
+
+    #[Route('/admin/control/{id}', name: 'app_admin_control')]
+    public function regulatePlayer(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager)
+    {
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $user = $userRepository->findUserById($id);
+        }
+
+        if (!$user) {
+            throw $this->createAccessDeniedException('Page not found');
+        }
+
+        $form = $this->createForm(AdminType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_admin_control', ['id' => $id]);
+        }
+
+        return $this->render('player/admin.html.twig', [
+            'form' => $form,
+            'user' => $user
         ]);
     }
 }

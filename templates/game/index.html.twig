@@ -33,11 +33,11 @@
 				</div>
 				<div class="game-controls">
 					{% if user is defined %} 
-						{# {% if is_granted('ROLE_USER') %}
-							<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">
-								show
+						{% if is_granted('ROLE_USER') %}
+							<a href="{{ path('app_game_leaderboard', {'id': game.id, 'orderBy': 's.score', 'direction': 'DESC'}) }}" class="button">
+								Leaderboard
 							</a>
-						{% endif %} #}
+						{% endif %}
 
 						{% if is_granted('ROLE_ADMIN') or game.owner == user.id %}
 						<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">

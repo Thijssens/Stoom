@@ -33,6 +33,14 @@ final class ProfileController extends AbstractController
 
             $playedGames = $scoreRepository->countPlayedGamesByUserId($user->getId());
             $numberOfPlayedGames = $playedGames[0][1];
+
+            $playedGames = $scoreRepository->findPlayedGamesByUserId($user->getId());
+            //array voor chart, ineens header inzetten omdat google chart dit nodig heeft
+            $chartArray = [["Game", "Game played"]];
+            foreach ($playedGames as $game) {
+                $chartData = $scoreRepository->countGamePlayedByUserIdAndGameId($user->getId(), $game['id']);
+                array_push($chartArray, [$game['name'], $chartData[0][1]]);
+            }
         }
 
 
@@ -47,7 +55,8 @@ final class ProfileController extends AbstractController
             'achievements' => $achievements,
             'lowestTime' => $lowestTime,
             'highestScore' => $highestScore,
-            'numberOfPlayedGames' => $numberOfPlayedGames
+            'numberOfPlayedGames' => $numberOfPlayedGames,
+            'chartArray' => $chartArray
         ]);
     }
 

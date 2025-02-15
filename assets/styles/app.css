@@ -78,12 +78,12 @@ a {
   color: #dcdedf;
   margin: 20px;
   width: 90%;
-  height: 100px;
+  height: 120px;
 }
 
 .game-img {
-  height: 100px;
-  width: 178px;
+  height: 120px;
+  width: 214px;
 }
 
 .game-show-img {
@@ -92,8 +92,8 @@ a {
 }
 
 .player-img {
-  height: 100px;
-  width: 100px;
+  height: 120px;
+  width: 120px;
 }
 
 /* verhouding van gamethumbnails moeten 16:9 zijn */
@@ -125,6 +125,12 @@ a {
 
 .game-table {
   margin-top: 30px;
+}
+
+.game-table > thead > tr > td {
+  background-color: #171d25;
+  color: #dcdedf;
+  padding: 10px 20px;
 }
 
 .game-table > tbody > tr > th,

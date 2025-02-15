@@ -15,20 +15,20 @@ class GameType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('thumbnail', FileType::class,array('data_class' => null), [
+            ->add('thumbnail', FileType::class, [
                 'label' => 'Game Image',
+                'data_class' => null,
                 'constraints' => [
                     new Image([
                         'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
                         'mimeTypesMessage' => 'Please upload a valid image (JPEG, PNG or WEBP)',
-                        'maxSize' => '10M', 
+                        'maxSize' => '10M',
                         'maxSizeMessage' => 'The maximum allowed file size is 10MB.',
                     ]),
                 ],
             ])
             ->add('link')
-            ->add('isPublic')
-        ;
+            ->add('isPublic');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

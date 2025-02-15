@@ -60,6 +60,7 @@
 
 		{# kijken of de conversatie leeg is, zo ja zorgen dat er geen bericht kan verstuurd worden #}
 
+		{% if sender.isMuted == false %}
 		{% if conversation|length > 1 %}
 			<div id="message-new">
 				{{ form_start(form) }}{{ form_row(form.content) }}
@@ -68,7 +69,7 @@
 				{{ form_end(form) }}
 			</div>
 		{% endif %}
-
+		{% endif %}
 
 	</div>
 

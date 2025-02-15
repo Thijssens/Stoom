@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Score;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -47,6 +48,58 @@ class ScoreRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findPlayedGamesByUserId($value): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('DISTINCT g.name, g.id')
+            ->innerJoin('s.game', 'g') // Verwijzing naar de relatie in je entity
+            ->andWhere('s.user = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function countGamePlayedByUserIdAndGameId($userId, $gameId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('COUNT (s.id)')
+            ->andWhere('s.user = :userId AND s.game = :gameId')
+            ->setParameter('userId', $userId)
+            ->setParameter('gameId', $gameId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // public function findPlayedGamesByGameId($value): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('u.username, s.score, s.time')
+    //         ->innerJoin('s.user', 'u') // Verwijzing naar de relatie in je entity
+    //         ->andWhere('s.game = :val')
+    //         ->setParameter('val', $value)
+    //         ->orderBy('s.score', 'DESC')
+    //         ->setMaxResults(10)
+    //         ->getQuery()
+    //         ->getResult();
+    // }
+
+
+    //om leaderboard geordend te orderenen
+    public function findPlayedGamesByGameIdOrderBy($GameId, $orderby, $direction): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('u.username, s.score, s.time')
+            ->innerJoin('s.user', 'u') // Verwijzing naar de relatie in je entity
+            ->andWhere('s.game = :gameId')
+            ->setParameter('gameId', $GameId)
+            ->orderBy($orderby, $direction)
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

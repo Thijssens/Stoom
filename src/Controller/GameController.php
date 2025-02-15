@@ -8,6 +8,7 @@ use App\Form\GameType;
 use App\Repository\GameRepository;
 use App\Repository\FriendshipRepository;
 use App\Repository\MessageRepository;
+use App\Repository\ScoreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,8 +26,14 @@ final class GameController extends AbstractController
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             /** @var User $user */      //zo maken we gebruik van het echte user object
             $user = $this->getUser();
-            // $unreadMessages = $messageRepository->findUnreadMessages($user);
+            $unreadMessages = $messageRepository->findUnreadMessages($user);
+
+            if ($user->isBlocked() === true) {
+                return $this->redirectToRoute('app_logout');
+            }
         }
+
+
 
         //dd($this->getUser());
         if ($security->isGranted('ROLE_ADMIN')) {
@@ -141,7 +148,6 @@ final class GameController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $file = $form->get('thumbnail')->getData();
-
             $file->getPathname();
             $to = 'uploads/' .  $file->getClientOriginalName();
             move_uploaded_file($file->getPathname(), $to);
@@ -167,6 +173,10 @@ final class GameController extends AbstractController
     public function delete(Request $request, Game $game, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $game->getId(), $request->getPayload()->getString('_token'))) {
+            $path = $game->getThumbnail();
+            if (file_exists($path)) {
+                unlink($path);
+            }
             $entityManager->remove($game);
             $entityManager->flush();
         }
@@ -175,15 +185,7 @@ final class GameController extends AbstractController
         return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function setFullLink(array $games, User $user): array
-    {
 
-        foreach ($games as $game) {
-            $gameLink = $game->getFullLink($user);
-            $game->setLink($gameLink);
-        }
-        return $games;
-    }
 
     #[Route('/data/json', name: 'json_data')]
     public function getJsonData(): JsonResponse
@@ -272,5 +274,29 @@ final class GameController extends AbstractController
         ];
 
         return new JsonResponse($data);
+    }
+
+
+    #[Route('/game/{id}/leaderboard/{orderBy}/{direction}', name: 'app_game_leaderboard')]
+    public function showLeaderboard(int $id, string $orderBy, string $direction, ScoreRepository $scoreRepository): Response
+    {
+        // $gameScores = $scoreRepository->findPlayedGamesByGameId($id);
+
+        $gameScores = $scoreRepository->findPlayedGamesByGameIdOrderBy($id, $orderBy, $direction);
+
+        return $this->render('game/leaderboard.html.twig', [
+            "gameId" => $id,
+            "gameScores" => $gameScores,
+        ]);
+    }
+
+    public function setFullLink(array $games, User $user): array
+    {
+
+        foreach ($games as $game) {
+            $gameLink = $game->getFullLink($user);
+            $game->setLink($gameLink);
+        }
+        return $games;
     }
 }

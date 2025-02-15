@@ -92,6 +92,7 @@ final class MessageController extends AbstractController
             'friends' => $friends,
             'receiver' => $receiver,
             'friendRequests' => $friendRequests,
+            'sender' => $sender
         ]);
     }
 
