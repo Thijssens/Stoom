@@ -21,46 +21,45 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class GameController extends AbstractController
 {
     #[Route(name: 'app_game_index', methods: ['GET'])]
-    public function index(GameRepository $gameRepository, Security $security, FriendshipRepository $friendshipRepository, MessageRepository $messageRepository): Response
+    public function index(GameRepository $gameRepository, Security $security, FriendshipRepository $friendshipRepository): Response
     {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            /** @var User $user */      //zo maken we gebruik van het echte user object
+            /** @var User $user */
             $user = $this->getUser();
-            $unreadMessages = $messageRepository->findUnreadMessages($user);
 
             if ($user->isBlocked() === true) {
                 return $this->redirectToRoute('app_logout');
             }
-        }
 
+            if ($security->isGranted('ROLE_ADMIN')) {
+                $retrievedGames = $gameRepository->findAll();
+                $games = $this->setFullLink($retrievedGames, $user);
 
+                return $this->render('game/index.html.twig', [
+                    'games' => $games,
+                    'user' => $user,
+                ]);
+            }
 
-        //dd($this->getUser());
-        if ($security->isGranted('ROLE_ADMIN')) {
-            $retrievedGames = $gameRepository->findAll();
-            $games = $this->setFullLink($retrievedGames, $user);
+            if ($security->isGranted('ROLE_USER')) {
+                $friendIds = $friendshipRepository->findFriendsIdByUserId($user->getId());
+                $retrievedGames = $gameRepository->findViewableGames($user->getId(), $friendIds);
+                $games = $this->setFullLink($retrievedGames, $user);
 
+                return $this->render('game/index.html.twig', [
+                    'games' => $games,
+                    'user' => $user
+                ]);
+            }
 
-            return $this->render('game/index.html.twig', [
-                'games' => $games,
-                'user' => $user,
-                // 'unreadMessages' => count($unreadMessages),
-            ]);
-        } elseif ($security->isGranted('ROLE_USER')) {
-            $friendIds = $friendshipRepository->findFriendsIdByUserId($user->getId());
-            $retrievedGames = $gameRepository->findViewableGames($user->getId(), $friendIds);
-            $games = $this->setFullLink($retrievedGames, $user);
-
-            return $this->render('game/index.html.twig', [
-                'games' => $games,
-                'user' => $user
-                // 'unreadMessages' => count($unreadMessages),
-            ]);
-        } else {
             return $this->render('game/index.html.twig', [
                 'games' => $gameRepository->getPublicGames(),
             ]);
         }
+
+        return $this->render('game/index.html.twig', [
+            'games' => $gameRepository->getPublicGames(),
+        ]);
     }
 
 
@@ -71,16 +70,15 @@ final class GameController extends AbstractController
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             /** @var User $user */
             $user = $this->getUser();
+            $friends = $friendshipRepository->findFriendsByUserId($user->getId());
+            $games = [];
+            foreach ($friends as $friend) {
+                $games += $gameRepository->findGamesByUserId($friend->getFriendId());
+            }
+            return $this->render('game/friends.html.twig', ['games' => $games]);
+        } else {
+            throw $this->createAccessDeniedException('You must be logged in.');
         }
-
-        $friends = $friendshipRepository->findFriendsByUserId($user->getId());
-        $games = [];
-        foreach ($friends as $friend) {
-            $games += $gameRepository->findGamesByUserId($friend->getFriendId());
-        }
-
-
-        return $this->render('game/friends.html.twig', ['games' => $games]);
     }
 
     #[Route('/game/new', name: 'app_game_new', methods: ['GET', 'POST'])]
@@ -106,15 +104,10 @@ final class GameController extends AbstractController
             move_uploaded_file($file->getPathname(), $to);
             $game->setThumbnail($to);
 
-
-            // $user = $this->getUser();
-            // $id = $user->getId();
-
-
             $entityManager->persist($game);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_game_index');
         }
 
         return $this->render('game/new.html.twig', [
@@ -129,6 +122,7 @@ final class GameController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
+        //enkel owners of admins kunnen show game zien
         if (!$security->isGranted('ROLE_ADMIN') && $game->getOwner() !== $user->getId()) {
             die('Game not found');
         }
@@ -280,7 +274,7 @@ final class GameController extends AbstractController
     #[Route('/game/{id}/leaderboard/{orderBy}/{direction}', name: 'app_game_leaderboard')]
     public function showLeaderboard(int $id, string $orderBy, string $direction, ScoreRepository $scoreRepository): Response
     {
-        // $gameScores = $scoreRepository->findPlayedGamesByGameId($id);
+
 
         $gameScores = $scoreRepository->findPlayedGamesByGameIdOrderBy($id, $orderBy, $direction);
 

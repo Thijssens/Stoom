@@ -7,7 +7,6 @@ use App\Form\ProfileType;
 use App\Repository\AchievementRepository;
 use App\Repository\GameRepository;
 use App\Repository\ScoreRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,13 +25,14 @@ final class ProfileController extends AbstractController
             $user = $this->getUser();
             $games = $gameRepository->findGamesByUserId($user->getId());
             $achievements = $achievementRepository->findAchievementByUserId($user->getId());
+
+            //statistieken
             $lowestTimes = $scoreRepository->findLowestTimeByUserId($user->getId()); // geeft een array terug om de 1 of andere reden
             $lowestTime = $lowestTimes[0][1];
             $highestScores = $scoreRepository->findHighestScoreByUserId($user->getId());
             $highestScore = $highestScores[0][1];
-
-            $playedGames = $scoreRepository->countPlayedGamesByUserId($user->getId());
-            $numberOfPlayedGames = $playedGames[0][1];
+            $countPlayedGames = $scoreRepository->countPlayedGamesByUserId($user->getId());
+            $numberOfPlayedGames = $countPlayedGames[0][1];
 
             $playedGames = $scoreRepository->findPlayedGamesByUserId($user->getId());
             //array voor chart, ineens header inzetten omdat google chart dit nodig heeft
@@ -41,13 +41,11 @@ final class ProfileController extends AbstractController
                 $chartData = $scoreRepository->countGamePlayedByUserIdAndGameId($user->getId(), $game['id']);
                 array_push($chartArray, [$game['name'], $chartData[0][1]]);
             }
-        }
-
-
-
-        if (!$user) {
+        } else {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
         }
+
+
 
         return $this->render('profile/show.html.twig', [
             'user' => $user,
@@ -66,9 +64,7 @@ final class ProfileController extends AbstractController
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             /** @var User $user */
             $user = $this->getUser();
-        }
-
-        if (!$user) {
+        } else {
             throw $this->createAccessDeniedException('You must be logged in to edit your profile.');
         }
 

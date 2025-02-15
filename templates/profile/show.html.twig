@@ -32,10 +32,8 @@
 						Gender :
 						{{ user.gender }}
 					</p>
-					<p>
-						Birthday:
-						{{ user.birthday|date('Y-m-d')}}
-					</p>
+					<p>Birthday:
+						{{ user.birthday ? user.birthday|date('Y-m-d') : null }}</p>
 				</div>
 			</div>
 			<a href="{{ path('app_profile_edit') }}" class="button">

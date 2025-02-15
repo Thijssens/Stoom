@@ -9,14 +9,23 @@
 		<h1>
 			Top 10 Scores
 		</h1>
-		{# toegevoegd #}
-		<span>Sort by: 
-		<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.score', 'direction': 'ASC'}) }}" class="button">score asc</a>
-		<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.score', 'direction': 'DESC'}) }}" class="button">score desc</a>
-		<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.time', 'direction': 'ASC'}) }}" class="button">time asc</a>
-		<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.time', 'direction': 'DESC'}) }}" class="button">time desc</a>
+
+		<span>
+			Sort by:
+			<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.score', 'direction': 'ASC'}) }}" class="button">
+				score asc
+			</a>
+			<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.score', 'direction': 'DESC'}) }}" class="button">
+				score desc
+			</a>
+			<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.time', 'direction': 'ASC'}) }}" class="button">
+				time asc
+			</a>
+			<a href="{{ path('app_game_leaderboard', {'id': gameId, 'orderBy': 's.time', 'direction': 'DESC'}) }}" class="button">
+				time desc
+			</a>
 		</span>
-		{# einde toegevoegd #}
+
 		<table class="game-table">
 			<thead>
 				<tr>
@@ -59,58 +68,55 @@
 
 <script async defer type="text/javascript">
 
-		let gameScoresArray = {{ gameScores|json_encode|raw }};
+	let gameScoresArray = {{ gameScores|json_encode|raw }};
+
+	let chartData = [['Username', 'Score', 'Time']];
+
+	for (let i = 0; i < gameScoresArray.length; i++) {
+		chartData.push([
+		gameScoresArray[i].username,
+		gameScoresArray[i].score,
+		gameScoresArray[i].time
+		]);
+	}
 
 
-let chartData = [['Username', 'Score', 'Time']];
-// gameScoresArray.foreach((score) => chartData.push([score.username, score.score, score.time]));
-for (let i = 0; i < gameScoresArray.length; i++) {
-chartData.push([
-gameScoresArray[i].username,
-gameScoresArray[i].score,
-gameScoresArray[i].time
-]);
+	google.charts.load('current', {'packages': ['bar']});
+	google.charts.setOnLoadCallback(drawChart);
 
-}
+	function drawChart() {
+		var data = google.visualization.arrayToDataTable(chartData);
 
-console.log(chartData);
+		var options = {
+			backgroundColor: 'transparent',
+			width: 500,
+			height: 500,
+			legend: {
+				textStyle: {
+				color: 'black',
+				fontSize: 16
+				}
+			},
+			chartArea: {
+				backgroundColor: 'transparent'
+			},
+			hAxis: {
+				textStyle: {
+					color: 'black'
+				}
+			},
+			vAxis: {
+				textStyle: {
+					color: 'black'
+				}
+			}
+		};
 
-google.charts.load('current', {'packages': ['bar']});
-google.charts.setOnLoadCallback(drawChart);
+		var chart = new google.charts.Bar(document.getElementById('barChart'));
 
-function drawChart() {
-var data = google.visualization.arrayToDataTable(chartData);
+		chart.draw(data, google.charts.Bar.convertOptions(options));
+	}
+</script>
 
-var options = {
-backgroundColor: 'transparent',
-width: 500,
-height: 500,
-legend: {
-textStyle: {
-color: 'black',
-fontSize: 16
-}
-},
-chartArea: {
-backgroundColor: 'transparent'
-},
-hAxis: {
-textStyle: {
-color: 'black'
-}
-},
-vAxis: {
-textStyle: {
-color: 'black'
-}
-}
-};
-
-var chart = new google.charts.Bar(document.getElementById('barChart'));
-
-chart.draw(data, google.charts.Bar.convertOptions(options));
-}
-	</script>
-	
 
 {% endblock %}

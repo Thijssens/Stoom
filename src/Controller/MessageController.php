@@ -8,7 +8,6 @@ use DateTimeImmutable;
 use App\Entity\Message;
 use App\Form\MessageType;
 use App\Entity\Friendship;
-use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use App\Repository\MessageRepository;
 use App\Repository\FriendshipRepository;
@@ -19,7 +18,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-// use function Symfony\Component\Clock\now;
 
 #[Route('/message')]
 final class MessageController extends AbstractController
@@ -28,6 +26,7 @@ final class MessageController extends AbstractController
 
     public function index(int $id, Request $request, ?User $receiver, EntityManagerInterface $em, UserRepository $userRepository, MessageRepository $messageRepository, FriendshipRepository $friendshipRepository, Environment $twig): Response
     {
+        /** @var User $sender */
         $sender = $this->getUser();
         $receiver = $userRepository->findUserById($id);
         $friendRequests = [];
@@ -36,9 +35,8 @@ final class MessageController extends AbstractController
         $friendIds = $friendshipRepository->findFriendsIdByUserId($sender);
         $friends = $userRepository->findFriendsByIds($friendIds);
 
-        //checken of we vrienden zijn met de receiver(friend request)
-
         //OPHALEN CONVERSATIE
+        //wanneer je van de knop messages of unread messages naar hier gaat => geen receiverID
         if (!isset($receiver)) {
             $conversation = [];
             //kijken of we ongelezen berichten hebben van NIET vrienden -> friend requests
@@ -56,11 +54,12 @@ final class MessageController extends AbstractController
             }
         }
 
+        //hier is wel een receiver id want knop message naast player of dropdown verwijst naar id in url
         if (isset($receiver)) {
             $conversation = $messageRepository->findMessagesBetweenUsers($sender, $receiver);
             foreach ($conversation as $message) {
                 if ($message->getReceiver() == $sender) {
-                    $this->updateMessage($message, $em);
+                    $this->updateMessage($message, $em); //isread op true
                 }
             }
             //nagaan of de ongelezen berichten van deze conversatie zijn en melding ongelezen berichten verwijderen 
@@ -99,6 +98,7 @@ final class MessageController extends AbstractController
     #[Route('/friendRequest/{id}', name: 'message_friendRequest')]
     public function sentRequest(int $id, UserRepository $userRepository, EntityManagerInterface $em, Request $request)
     {
+        /** @var User $sender */
         $sender = $this->getUser();
         $receiver = $userRepository->findUserById($id);
         $message = new Message();
@@ -143,7 +143,7 @@ final class MessageController extends AbstractController
         $em->persist($message);
         $em->flush();
 
-        return $this->redirectToRoute('message_index', ['id' => 0]);
+        return $this->redirectToRoute('message_index', ['id' => 0]); //startpositie => geen vriend geselecteerd
     }
 
     #[Route('/friendRequest/decline/{id}', name: 'message_request_decline')]

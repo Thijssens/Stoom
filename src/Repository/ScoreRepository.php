@@ -74,18 +74,6 @@ class ScoreRepository extends ServiceEntityRepository
         ;
     }
 
-    // public function findPlayedGamesByGameId($value): array
-    // {
-    //     return $this->createQueryBuilder('s')
-    //         ->select('u.username, s.score, s.time')
-    //         ->innerJoin('s.user', 'u') // Verwijzing naar de relatie in je entity
-    //         ->andWhere('s.game = :val')
-    //         ->setParameter('val', $value)
-    //         ->orderBy('s.score', 'DESC')
-    //         ->setMaxResults(10)
-    //         ->getQuery()
-    //         ->getResult();
-    // }
 
 
     //om leaderboard geordend te orderenen

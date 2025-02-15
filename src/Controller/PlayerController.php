@@ -19,20 +19,20 @@ final class PlayerController extends AbstractController
     #[Route('/player', name: 'app_player')]
     public function index(Request $request, UserRepository $userRepository, FriendshipRepository $friendshipRepository, MessageRepository $messageRepository): Response
     {
-        $search = $request->query->get('search', '');
+        $search = $request->query->get('search', ''); //zoekveld
         /** @var User $user */
         $user = $this->getUser();
         $friendIds = $friendshipRepository->findFriendsIdByUserId($user->getId());
 
 
         $players = $search
-            ? $userRepository->findByUsername($search)
-            : $userRepository->findAll();
+            ? $userRepository->findByUsername($search) //als er iets in zit
+            : $userRepository->findAll(); //als er niets in zit
 
-
+        //voor een request pendinig te kunnen maken
         $sentMessages = $messageRepository->findSentMessages($user);
         $receiverIds = [];
-        if (isset($sentMessages)) {
+        if (!empty($sentMessages)) {
             foreach ($sentMessages as $message) {
                 array_push($receiverIds, $message->getReceiver()->getId());
             }
@@ -44,7 +44,6 @@ final class PlayerController extends AbstractController
             'search' => $search,
             'friendsIds' => $friendIds,
             'receiverIds' => $receiverIds,
-            // 'sentMessages' => $sentMessages,
         ]);
     }
 
@@ -55,9 +54,7 @@ final class PlayerController extends AbstractController
 
         if ($this->isGranted('ROLE_ADMIN')) {
             $user = $userRepository->findUserById($id);
-        }
-
-        if (!$user) {
+        } else {
             throw $this->createAccessDeniedException('Page not found');
         }
 

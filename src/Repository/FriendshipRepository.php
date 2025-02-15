@@ -35,7 +35,7 @@ class FriendshipRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        // Extract the friend IDs into a single array
+        // Zet de id's in 1 array, anders array in array in array
         return array_column($results, 'friendId');
     }
 

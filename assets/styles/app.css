@@ -110,7 +110,7 @@ a {
   padding-left: 2em;
   padding-right: 2em;
   height: 100%;
-  /* om div van de game-date te laten groeien zodat game-control helemaal rechts komt */
+  /* om div van de game-data te laten groeien zodat game-control helemaal rechts komt */
   flex-grow: 1;
 }
 
