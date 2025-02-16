@@ -13,9 +13,10 @@
   <body>
     <header>
       <h1>Quiz Game</h1>
+      <h3 id="player-name"></h3>
       <img id="player-img" src="" alt="" />
-      <h3 id="player-name">Speler xxx</h3>
     </header>
+
     <div class="container">
       <section id="parameters">
         <div id="category-container">
@@ -37,19 +38,18 @@
           <p id="alert"></p>
         </div>
       </section>
+
       <section id="quiz">
         <div id="quiz-container">
           <div id="question-container">
             <p id="question"></p>
           </div>
-
           <div id="answers-container">
             <button class="answer-btn" id="answer1">...</button>
             <button class="answer-btn" id="answer2">...</button>
             <button class="answer-btn" id="answer3">...</button>
             <button class="answer-btn" id="answer4">...</button>
           </div>
-
           <div id="next-button-container">
             <button id="next-button" disabled="true">Next Question</button>
           </div>
@@ -59,6 +59,7 @@
           <h1 id="score-number">0</h1>
         </div>
       </section>
+
       <section id="achievements">
         <table>
           <tr>
@@ -95,7 +96,6 @@
         </table>
       </section>
     </div>
-    <!-- om een mooiere alert box te maken via sweetalert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   </body>
 </html>

@@ -5,23 +5,16 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\Entity\User;
 use App\Entity\Score;
-use App\Form\GameType;
 use DateTimeImmutable;
 use App\Entity\Achievement;
 use App\Repository\GameRepository;
 use App\Repository\UserRepository;
-use App\Repository\MessageRepository;
-use App\Repository\FriendshipRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AchievementRepository;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\Encoder\JsonEncode;
 
 #[Route('/api', name: "api_")]
 class APIController extends AbstractController
@@ -54,7 +47,7 @@ class APIController extends AbstractController
         $user = $userRepository->findUserById($userId);
 
         //als er geen waarde is meegegeven voor de velden worden deze op null gezet
-        //we moeten aldus nog een extra controle doen op de waarde null want de velden
+        //we moeten dus nog een extra controle doen op de waarde null want de velden
         //mogen in de databank niet null zijn (een foutmelding terug sturen)
         if (!is_string($name) || !is_string($image) || !is_string($date) || !($game instanceof Game) || !($user instanceof User)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
@@ -81,16 +74,15 @@ class APIController extends AbstractController
 
 
     #[Route('/achievement/get', name: 'achievement_get', methods: ['GET'])]
-    public function getAchievement(Request $request, AchievementRepository $achievementRepository, GameRepository $gameRepository, UserRepository $userRepository): JsonResponse
+    public function getAchievement(AchievementRepository $achievementRepository, GameRepository $gameRepository, UserRepository $userRepository): JsonResponse
     {
-
 
         $apiKey = $_GET['apiKey'] ?? null;
         $userId = $_GET['userId'] ?? null;
         $hash = $_GET['hash'] ?? null;
 
-        $userId = intval($userId) ?? null;
-        if (!is_string($apiKey) || !is_int($userId) || !is_string($hash)) {
+        $userId = intval($userId);
+        if (!is_string($apiKey) || !is_string($hash)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
@@ -108,36 +100,6 @@ class APIController extends AbstractController
             array_push($achievementNames, $achievement->getName());
         }
         return new JsonResponse($achievementNames);
-
-
-        // // JSON-data ophalen en omzetten naar een array
-        // $data = json_decode($request->getContent(), true);
-
-        // // Controleer of de data geldig is
-        // if (!$data) {
-        //     return new JsonResponse(['error' => 'Invalid JSON'], 400);
-        // }
-
-        // $gameId = $data['gameId'] ?? null;
-        // $userId = $data['userId'] ?? null;
-
-
-        // //vind game en user bij Id om door te geven in de achievement setters
-        // if (!is_int($gameId) || !is_int($userId)) {
-        //     return new JsonResponse(['error' => 'Invalid userId or GameId'], 400);
-        // }
-
-        // // $game = $gameRepository->findGameById($gameId);
-        // // $user = $userRepository->findUserById($userId);
-
-        // //achievements ophalen uit databank
-        // $achievements = $achievementRepository->findAchievementByGameIdAndUserId($gameId, $userId);
-        // $achievementNames = [];
-        // foreach ($achievements as $achievement) {
-        //     array_push($achievementNames, $achievement->getName());
-        // }
-
-        // return new JsonResponse([$achievementNames]);
     }
 
 
@@ -199,8 +161,8 @@ class APIController extends AbstractController
         $userId = $_GET['userId'] ?? null;
         $hash = $_GET['hash'] ?? null;
 
-        $userId = intval($userId) ?? null;
-        if (!is_string($apiKey) || !is_int($userId) || !is_string($hash)) {
+        $userId = intval($userId);
+        if (!is_string($apiKey) || !is_string($hash)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
@@ -219,33 +181,5 @@ class APIController extends AbstractController
         ];
 
         return new JsonResponse($userData);
-
-
-        // // JSON-data ophalen en omzetten naar een array
-        // $data = json_decode($request->getContent(), true);
-
-        // // Controleer of de data geldig is
-        // if (!$data) {
-        //     return new JsonResponse(['error' => 'Invalid JSON'], 400);
-        // }
-
-        // $userId = $data['userId'] ?? null;
-
-
-        // //vind game en user bij Id om door te geven in de achievement setters
-        // if (!is_int($userId)) {
-        //     return new JsonResponse(['error' => 'Invalid userId'], 400);
-        // }
-
-        // //user ophalen uit databank
-        // $user = $userRepository->findUserById($userId);
-        // $userData = [
-        //     'username' => $user->getUsername(),
-        //     'profilePicture' => $user->getProfilepicture()
-        // ];
-
-
-
-        // return new JsonResponse([$userData]);
     }
 }

@@ -22,37 +22,37 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            
+
+
             $file = $form->get('profilepicture')->getData();
 
-            if (isset($file)){
-                
+            if (isset($file)) {
+
                 $file->getPathname();
                 $to = 'uploads/' .  $file->getClientOriginalName();
-                move_uploaded_file($file->getPathname(), $to );
+                move_uploaded_file($file->getPathname(), $to);
                 $user->setProfilepicture($to);
             }
 
-            if (!isset($file)){
+            if (!isset($file)) {
                 $user->setProfilepicture('uploads/Dummy_User.jpg');
             }
-            
-            
-            
+
+
+            /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            
+
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
             $user->setRoles(['ROLE_USER']);
             $user->setIsadmin(false);
+            $user->setIsBlocked(false);
+            $user->setIsMuted(false);
+            $user->setIsRestrictedFromFriendRequests(false);
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // do anything else you need here, like send an email
-            
 
             return $security->login($user);
         }

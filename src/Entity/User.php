@@ -69,6 +69,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Achievement::class, mappedBy: 'userId', orphanRemoval: true)]
     private Collection $achievements;
 
+    #[ORM\Column]
+    private ?bool $isBlocked = null;
+
+    #[ORM\Column]
+    private ?bool $isMuted = null;
+
+    #[ORM\Column]
+    private ?bool $isRestrictedFromFriendRequests = null;
+
     public function __construct()
     {
         $this->sentMessages = new ArrayCollection();
@@ -297,6 +306,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $achievement->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isBlocked(): ?bool
+    {
+        return $this->isBlocked;
+    }
+
+    public function setIsBlocked(bool $isBlocked): static
+    {
+        $this->isBlocked = $isBlocked;
+
+        return $this;
+    }
+
+    public function isMuted(): ?bool
+    {
+        return $this->isMuted;
+    }
+
+    public function setIsMuted(bool $isMuted): static
+    {
+        $this->isMuted = $isMuted;
+
+        return $this;
+    }
+
+    public function isRestrictedFromFriendRequests(): ?bool
+    {
+        return $this->isRestrictedFromFriendRequests;
+    }
+
+    public function setIsRestrictedFromFriendRequests(bool $isRestrictedFromFriendRequests): static
+    {
+        $this->isRestrictedFromFriendRequests = $isRestrictedFromFriendRequests;
 
         return $this;
     }

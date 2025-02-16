@@ -2,12 +2,16 @@
 
 namespace App\EventListener;
 
-use App\Repository\FriendshipRepository;
+use App\Entity\User;
 use Twig\Environment;
+use App\Repository\MessageRepository;
+use App\Repository\FriendshipRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use App\Repository\MessageRepository;
+
+
+//wordt gebruikt om global variables te maken voor in de header
 
 class TwigGlobalListener implements EventSubscriberInterface
 {
@@ -27,9 +31,10 @@ class TwigGlobalListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
+        /** @var User $user */
         $user = $this->security->getUser();
 
-        if ($user) {
+        if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
             $unreadMessages = count($this->messageRepository->findUnreadMessages($user));
             $this->twig->addGlobal('unreadMessagesCount', $unreadMessages);
 
@@ -51,6 +56,3 @@ class TwigGlobalListener implements EventSubscriberInterface
         ];
     }
 }
-
-//cache nog leegmaken voor eerste gebruik
-//php bin/console cache:clear

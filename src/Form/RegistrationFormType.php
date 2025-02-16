@@ -97,17 +97,16 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please confirm your password',
                     ]),
-                    new Callback([
-                        'callback' => function ($confirmPassword, ExecutionContextInterface $context) {
-                            $form = $context->getRoot();
-                            $plainPassword = $form->get('plainPassword')->getData();
+                    new Callback(function ($confirmPassword, ExecutionContextInterface $context) {
+                        $form = $context->getRoot();
+                        $plainPassword = $form->get('plainPassword')->getData();
 
-                            if ($plainPassword !== $confirmPassword) {
-                                $context->buildViolation('Passwords do not match.')
-                                    ->addViolation();
-                            }
-                        },
-                    ]),
+                        if ($plainPassword !== $confirmPassword) {
+                            $context->buildViolation('Passwords do not match.')
+                                ->addViolation();
+                        }
+                    }),
+
                 ],
             ])
         ;

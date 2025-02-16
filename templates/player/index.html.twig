@@ -7,12 +7,14 @@
 {% block body %}
 
 	<div class="container">
-	<div id="search-box">
-	<form method="get" action="{{ path('app_player') }}">
-        <input type="text" name="search" value="{{ search }}" placeholder="Search players by name">
-        <button type="submit">Search</button>
-    </form>
-	</div>
+		<div id="search-box">
+			<form method="get" action="{{ path('app_player') }}">
+				<input type="text" name="search" value="{{ search }}" placeholder="Search players by name">
+				<button type="submit">
+					Search
+				</button>
+			</form>
+		</div>
 
 		{% for player in players %}
 			{% if (player.id != user.id) %}
@@ -25,21 +27,30 @@
 							{{player.username}}
 						</h2>
 					</div>
-					<div class="player-controls">		
+					<div class="player-controls">
+						{% if is_granted('ROLE_ADMIN') %}
+							<a href="{{ path('app_admin_control', {'id': player.id}) }}" class="button">
+								Admin control
+							</a>
+						{% endif %}
 						{% if player.id in friendsIds %}
 							<a href="{{ path('message_index', { id: player.id }) }}" class="button">
-							Send message
+								Send message
 							</a>
 						{% endif %}
 						{% if player.id not in friendsIds %}
 							{# 2 opties: wel of geen vriendschapsverzoek verzonden #}
 							{% if receiverIds is defined and player.id in receiverIds %}
 								<a href="" class="button">
-									Pending Friendrequest</a>
+									Pending Friendrequest
+								</a>
 							{% endif %}
-							{% if receiverIds is defined and player.id not in receiverIds %}
-								<a href="{{ path('message_friendRequest', { id: player.id}) }}" class="button">
-									Add Friend</a>
+							{% if user.isRestrictedFromFriendRequests == false %}
+								{% if receiverIds is defined and player.id not in receiverIds %}
+									<a href="{{ path('message_friendRequest', { id: player.id}) }}" class="button">
+										Add Friend
+									</a>
+								{% endif %}
 							{% endif %}
 						{% endif %}
 					</div>
@@ -48,6 +59,5 @@
 		{% endfor %}
 
 
-    
 	</div>
 {% endblock %}

@@ -32,26 +32,10 @@ class Game
     #[ORM\Column]
     private ?int $owner = null;
 
-    // /**
-    //  * @var Collection<int, Score>
-    //  */
-    // #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'gameId', orphanRemoval: true)]
-    // private Collection $scores;
-
-    // /**
-    //  * @var Collection<int, Achievement>
-    //  */
-    // #[ORM\OneToMany(targetEntity: Achievement::class, mappedBy: 'gameId')]
-    // private Collection $achievements;
-
     #[ORM\Column(length: 255)]
     private ?string $apiKey = null;
 
-    public function __construct()
-    {
-        // $this->scores = new ArrayCollection();
-        // $this->achievements = new ArrayCollection();
-    }
+    public function __construct() {}
 
     public function getId(): ?int
     {
@@ -117,66 +101,6 @@ class Game
 
         return $this;
     }
-
-    // /**
-    //  * @return Collection<int, Score>
-    //  */
-    // public function getScores(): Collection
-    // {
-    //     return $this->scores;
-    // }
-
-    // public function addScore(Score $score): static
-    // {
-    //     if (!$this->scores->contains($score)) {
-    //         $this->scores->add($score);
-    //         $score->setGame($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeScore(Score $score): static
-    // {
-    //     if ($this->scores->removeElement($score)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($score->getGame() === $this) {
-    //             $score->setGame(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
-
-    // /**
-    //  * @return Collection<int, Achievement>
-    //  */
-    // public function getAchievements(): Collection
-    // {
-    //     return $this->achievements;
-    // }
-
-    // public function addAchievement(Achievement $achievement): static
-    // {
-    //     if (!$this->achievements->contains($achievement)) {
-    //         $this->achievements->add($achievement);
-    //         $achievement->setGame($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeAchievement(Achievement $achievement): static
-    // {
-    //     if ($this->achievements->removeElement($achievement)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($achievement->getGame() === $this) {
-    //             $achievement->setGame(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
 
     public function generateApiKey(): string
     {
