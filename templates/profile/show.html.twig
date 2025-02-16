@@ -32,14 +32,17 @@
 						Gender :
 						{{ user.gender }}
 					</p>
-					<p>Birthday:
-						{{ user.birthday ? user.birthday|date('Y-m-d') : null }}</p>
+					<p>
+						Birthday:
+						{{ user.birthday ? user.birthday|date('Y-m-d') : null }}
+					</p>
 				</div>
 			</div>
 			<a href="{{ path('app_profile_edit') }}" class="button">
 				Edit
 			</a>
 		</div>
+
 
 		<div class="container">
 			<h1>
@@ -65,19 +68,14 @@
 							<a href="{{ path('app_login') }}" class="styledLink">
 								Login
 							</a>
-
 						{% endif %}
 					</div>
 					<div class="game-controls">
 						{% if user is defined%}
-							{% if is_granted('ROLE_USER') %}
-								{# class button bijgezet #}
+							{% if is_granted('ROLE_ADMIN') or game.owner == user.id %}
 								<a href="{{ path('app_game_show', {'id': game.id}) }}" class="button">
 									Show
 								</a>
-							{% endif %}
-
-							{% if is_granted('ROLE_ADMIN') or game.owner == user.id %}
 								<a href="{{ path('app_game_edit', {'id': game.id}) }}" class="button">
 									Edit
 								</a>
@@ -91,6 +89,7 @@
 				</p>
 			{% endfor %}
 		</div>
+
 
 		<div class="container">
 			<h1>
@@ -108,21 +107,16 @@
 						<p>
 							{{achievement.date|date('Y-m-d')}}
 						</p>
-
-
 					</div>
-
 				</div>
 			{% endfor %}
-
 		</div>
 
-		<div class="container">
 
+		<div class="container">
 			<h1>
 				My Stats
 			</h1>
-
 			<table class="game-table">
 				<tbody>
 					<tr>
@@ -153,45 +147,36 @@
 			</table>
 		</div>
 
-		<div class="container">
 
+		<div class="container">
 			<h1>
 				My Played Games
 			</h1>
 			<div id="donutChart"></div>
 		</div>
-
 	</div>
-
 
 	<script async defer type="text/javascript">
 
-	let chartData = {{ chartArray|json_encode|raw }};
+		let chartData = {{ chartArray|json_encode|raw }};
+		google.charts.load('current', {'packages': ['corechart']});
+		google.charts.setOnLoadCallback(drawChart);
 
-
-
-google.charts.load('current', {'packages': ['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-
-function drawChart() {
-
-var data = google.visualization.arrayToDataTable(chartData);
-
-var options = {
-pieHole: 0.4,
-legend: "bottom",
-pieSliceText: "percentage",
-backgroundColor: "transparent",
-width: 500,
-height: 500,
-chartArea: {
-top: 25
-}
-};
-
-var chart = new google.visualization.PieChart(document.getElementById('donutChart'));
-
-chart.draw(data, options);
-}
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable(chartData);
+			var options = {
+				pieHole: 0.4,
+				legend: "bottom",
+				pieSliceText: "percentage",
+				backgroundColor: "transparent",
+				width: 500,
+				height: 500,
+				chartArea: {
+					top: 25
+				}
+			};
+		var chart = new google.visualization.PieChart(document.getElementById('donutChart'));
+		chart.draw(data, options);
+		}
 	</script>
 {% endblock %}

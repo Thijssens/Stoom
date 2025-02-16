@@ -1,20 +1,19 @@
 let score = 0;
 let secondsPlayed = 0;
-//let bestTime = 0;
+//voor de 10 vragen per ronde
 let counter = 0;
+//voor de 5 rondes
 let roundsCounter = 0;
 let achievements = { easy: false, medium: false, hard: false, platinum: false };
+//voor juiste vragen na elkaar
 let streakCounter = 0;
 
 //API params
-console.log("test");
 const BASE_URL = "http://localhost/Stoom/public/api";
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
+const urlParams = new URLSearchParams(window.location.search);
 const apiKey = urlParams.get("apiKey");
 const userId = urlParams.get("userId");
 const hash = urlParams.get("hash");
-console.log(queryString);
 
 function getCategory(event) {
   let button = document.getElementById(event.target.id);
@@ -71,14 +70,15 @@ async function playGame() {
   let difficulty = selectedFields[1].id;
 
   let questions = await getQuestions(category, difficulty);
-  console.log(questions);
+
   showQuestion(questions[counter]);
   //timer starten
   timer = setInterval(startTimer, 1000);
 
   document
     .querySelector("#answers-container")
-    .addEventListener("click", function test(event) {
+    .addEventListener("click", function check(event) {
+      //function naam gegeven om event door te kunnen geven
       checkAnswer(event, questions[counter]);
     });
 
@@ -98,7 +98,6 @@ async function getQuestions(category, difficulty) {
 }
 
 function showQuestion(question) {
-  console.log(question.correct_answer);
   resetAnswerButtons();
   document.querySelector("#question").innerText = replaceSpecialCharacters(
     question.question
@@ -136,8 +135,8 @@ function checkAnswer(event, question) {
     if (playerAnswer !== replaceSpecialCharacters(question.correct_answer)) {
       streakCounter = 0;
       document.getElementById(playerAnswerBlock).style.background = "red";
+      //zet juiste vraag in het groen
       let answers = Array.from(document.getElementsByClassName("answer-btn"));
-      //console.log(answers);
       answers.forEach((answer) => {
         if (
           answer.innerText == replaceSpecialCharacters(question.correct_answer)
@@ -165,7 +164,6 @@ function checkAnswer(event, question) {
 }
 
 function checkAchievements(difficulty) {
-  //console.log(achievements[difficulty]);
   let reward = null;
   let image = null;
 
@@ -268,9 +266,11 @@ function counterChecker(question) {
   if (roundsCounter < 5) {
     counter = 0;
     streakCounter = 0;
+    //net gespeelde categorie en difficulty
     let selectedFields = Array.from(
       document.getElementsByClassName("selected")
     );
+    //button van net gespeelde ronde
     let categoryButton = document.getElementById(selectedFields[0].id);
 
     document.querySelector("#play-button").disabled = false;
@@ -317,7 +317,6 @@ function replaceSpecialCharacters(string) {
 
 function startTimer() {
   secondsPlayed++;
-  //console.log(secondsPlayed);
 }
 
 function pauseTimer() {
@@ -325,13 +324,11 @@ function pauseTimer() {
 }
 
 function showPlayedTime() {
+  saveScores(secondsPlayed);
   //secondsplayed omzetten naar uren, minuten en seconden
-  console.log("showPlayedTime");
   let hours = 0;
   let minutes = 0;
   let seconds = 0;
-
-  saveScores(secondsPlayed);
 
   if (secondsPlayed < 60) {
     seconds = secondsPlayed;
@@ -369,10 +366,7 @@ async function getAchievements() {
       hash
   );
   const rewards = await response.json();
-  console.log(rewards);
-
   fillAchievements(rewards);
-  console.log(achievements);
 }
 
 function fillAchievements(rewards) {
@@ -427,8 +421,6 @@ async function getPlayer() {
       hash
   );
   const playerInfo = await response.json();
-  console.log(playerInfo);
-
   showPlayerInfo(playerInfo);
 }
 
@@ -471,8 +463,3 @@ document
   .addEventListener("click", (event) => getDifficulty(event));
 
 document.querySelector("#play-button").addEventListener("click", playGame);
-
-//NOG TE DOEN:
-//kijken of nieuwe tijd beter is dan bestTime en indien nodig aanpassen
-//alle console.logs verwijderen
-//bij drukken op next question eerst checken of er een antwoord is geselecteerd

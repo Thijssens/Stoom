@@ -26,6 +26,9 @@ final class MessageController extends AbstractController
 
     public function index(int $id, Request $request, ?User $receiver, EntityManagerInterface $em, UserRepository $userRepository, MessageRepository $messageRepository, FriendshipRepository $friendshipRepository, Environment $twig): Response
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You must be logged in.');
+        }
         /** @var User $sender */
         $sender = $this->getUser();
         $receiver = $userRepository->findUserById($id);
@@ -98,6 +101,9 @@ final class MessageController extends AbstractController
     #[Route('/friendRequest/{id}', name: 'message_friendRequest')]
     public function sentRequest(int $id, UserRepository $userRepository, EntityManagerInterface $em, Request $request)
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You must be logged in.');
+        }
         /** @var User $sender */
         $sender = $this->getUser();
         $receiver = $userRepository->findUserById($id);
@@ -116,6 +122,9 @@ final class MessageController extends AbstractController
     #[Route('/friendRequest/accept/{id}', name: 'message_request_accept')]
     public function acceptRequest(int $id, UserRepository $userRepository, EntityManagerInterface $em)
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You must be logged in.');
+        }
         /** @var User $user */
         $user = $this->getUser();
         $friend = $userRepository->findUserById($id);
@@ -149,6 +158,9 @@ final class MessageController extends AbstractController
     #[Route('/friendRequest/decline/{id}', name: 'message_request_decline')]
     public function declineRequest(int $id, EntityManagerInterface $entityManager, MessageRepository $messageRepository)
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You must be logged in.');
+        }
         //bericht uit db halen
         $message = $messageRepository->findMessageById($id);
         $entityManager->remove($message);

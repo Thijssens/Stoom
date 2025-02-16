@@ -32,10 +32,7 @@
 							<a href="{{ path('app_admin_control', {'id': player.id}) }}" class="button">
 								Admin control
 							</a>
-
 						{% endif %}
-
-
 						{% if player.id in friendsIds %}
 							<a href="{{ path('message_index', { id: player.id }) }}" class="button">
 								Send message
@@ -48,7 +45,6 @@
 									Pending Friendrequest
 								</a>
 							{% endif %}
-
 							{% if user.isRestrictedFromFriendRequests == false %}
 								{% if receiverIds is defined and player.id not in receiverIds %}
 									<a href="{{ path('message_friendRequest', { id: player.id}) }}" class="button">

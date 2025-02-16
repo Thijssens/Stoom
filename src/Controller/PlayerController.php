@@ -19,6 +19,9 @@ final class PlayerController extends AbstractController
     #[Route('/player', name: 'app_player')]
     public function index(Request $request, UserRepository $userRepository, FriendshipRepository $friendshipRepository, MessageRepository $messageRepository): Response
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You must be logged in.');
+        }
         $search = $request->query->get('search', ''); //zoekveld
         /** @var User $user */
         $user = $this->getUser();

@@ -67,23 +67,25 @@ final class GameController extends AbstractController
     public function showFriendGames(GameRepository $gameRepository, FriendshipRepository $friendshipRepository)
     {
 
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            /** @var User $user */
-            $user = $this->getUser();
-            $friends = $friendshipRepository->findFriendsByUserId($user->getId());
-            $games = [];
-            foreach ($friends as $friend) {
-                $games += $gameRepository->findGamesByUserId($friend->getFriendId());
-            }
-            return $this->render('game/friends.html.twig', ['games' => $games]);
-        } else {
+        if (!$this->isGranted('ROLE_USER')) {
             throw $this->createAccessDeniedException('You must be logged in.');
         }
+        /** @var User $user */
+        $user = $this->getUser();
+        $friends = $friendshipRepository->findFriendsByUserId($user->getId());
+        $games = [];
+        foreach ($friends as $friend) {
+            $games += $gameRepository->findGamesByUserId($friend->getFriendId());
+        }
+        return $this->render('game/friends.html.twig', ['games' => $games]);
     }
 
     #[Route('/game/new', name: 'app_game_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You must be logged in.');
+        }
         $game = new Game();
         $form = $this->createForm(GameType::class, $game);
         $form->handleRequest($request);

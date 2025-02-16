@@ -79,18 +79,11 @@ button {
   background-color: #658e8e;
 }
 
-/* wanneer de kloppen disabled zijn worden volgende kleur de  */
-/* backgroundcolor: #efe4e4 */
-
 #play-button {
   background-color: darkslategray;
   margin-top: 1.5em;
   margin-bottom: 1em;
 }
-
-/* #play-button:hover {
-  background-color: #658e8e !important;
-} */
 
 #quiz {
   display: flex;

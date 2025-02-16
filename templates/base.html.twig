@@ -14,54 +14,34 @@
 			{% endblock %}
 		{% endblock %}
 	</head>
+
 	<body>
-	
-		<header>
-		
+		<header>	
 			<h1>Stoom</h1>
 			<nav>
 				{% if is_granted('ROLE_USER') %}
 					<a href="{{ path('app_game_index')}}" class="styledLink">All games</a>
 					<a href="{{ path('app_game_friends')}}" class="styledLink">Friends games</a>
 					<a href="{{ path('app_player')}}" class="styledLink">Players</a>
-
 				{% endif %}
-
 			</nav>
 			<div>
 				{% if is_granted('ROLE_USER') %}
 					<a href="{{ path('app_profile_show') }}" class="button">{{userEmail}}</a>
-					{# nog enkel laten zien wanneer je een vriend hebt #}
 					{% if numberOfFriends is defined and numberOfFriends > 0 %}
 						<a href="{{ path('message_index', { id: 0})}}" class="button">Message</a>
 					{% endif %}
 					{% if (unreadMessagesCount is defined) and (unreadMessagesCount > 0) %}
-						{# <span id="unread-messages">{{unreadMessages}}</span> #}
-
 						<a id="unread-messages" href="{{ path('message_index', { id: 0})}}">{{unreadMessagesCount}}</a>
-						
-						
-
 					{% endif %}
 					<a href="{{ path('app_logout') }}" class="button">Logout</a>
-					
-
-
-
-					{# {% endif %} #}
-
 				{% else %}
 					<a href="{{ path('app_login') }}" class="button">Login</a>
-
-
 				{% endif %}
-
-
 			</div>
 		</header>
 
 		{% block body %}{% endblock %}
 	</body>
 
-	
 </html>
